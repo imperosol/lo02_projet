@@ -4,13 +4,11 @@ import org.jetbrains.annotations.NotNull;
 import projet.Model.cards.*;
 import projet.Model.player.ComputerPlayer;
 import projet.Model.player.HumanPlayer;
-import projet.Model.player.Identity;
 import projet.Model.player.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.Scanner;
 
 
 public class Game {
@@ -18,7 +16,7 @@ public class Game {
     private final ArrayList<RumourCard> rumourCards;
     private Player nextPlayer;
     private final int cardPerPlayer;
-    private Round currentRound;
+//    private Round currentRound;
 
     public Game(int nbr_players, int nbr_ia) {
         this.cardPerPlayer = getCardPerPlayer(nbr_players);
@@ -26,13 +24,6 @@ public class Game {
         this.players = getPlayers(nbr_players, nbr_ia, this.cardPerPlayer);
         Random randomSeed = new Random();
         this.nextPlayer = this.players.get(randomSeed.nextInt(nbr_players));
-        this.currentRound = null;
-    }
-
-    public void startRound() {
-        this.distributeRumourCards();
-        this.assignRoles();
-        this.currentRound = new Round();
     }
 
 
@@ -50,10 +41,10 @@ public class Game {
         final ArrayList<Player> newPlayers = new ArrayList<>(nbr_players);
 
         for (int i = 0; i < nbr_ia; i++) {
-            newPlayers.add(new ComputerPlayer(card_per_player, "Joueur " + i + " (IA)"));
+            newPlayers.add(new ComputerPlayer(card_per_player, "Joueur " + i + " (IA)", this));
         }
         for (int i = nbr_ia; i < nbr_players; i++) {
-            newPlayers.add(new HumanPlayer(card_per_player, "Joueur " + i + " (humain)"));
+            newPlayers.add(new HumanPlayer(card_per_player, "Joueur " + i + " (humain)", this));
         }
         return newPlayers;
     }
@@ -78,22 +69,13 @@ public class Game {
         this.rumourCards.trimToSize();
     }
 
+    public void discardRumourCard(RumourCard card) {
+        this.rumourCards.add(card);
+    }
+
     private void assignRoles() {
         for (Player p : this.players) {
-            Scanner scan = new Scanner(System.in);
-            System.out.println(p.getName() + ", voulez-vous être :\n" +
-                    "1 : Villageois\n" +
-                    "2 : Sorcière");
-            int choice = scan.nextInt();
-            while (choice != 1 && choice != 2) {
-                System.out.print("Choix invalide, recommencez : ");
-                choice = scan.nextInt();
-            }
-            if (choice == 1) {
-                p.setIdentity(Identity.VILLAGER);
-            } else {
-                p.setIdentity(Identity.WITCH);
-            }
+            p.chooseIdentity();
         }
     }
 
@@ -101,23 +83,32 @@ public class Game {
         return this.players;
     }
 
-    public boolean isCurrentRoundEnded() {
-        if (this.currentRound == null) {  // no round atm
-            return true;
-        } else {
-            return this.currentRound.isRoundEnded();
+
+    public void makeGame() {
+        while (!this.isGameEnded()) {
+            this.distributeRumourCards();
+            this.assignRoles();
+            Round currentRound = new Round();
+            currentRound.makeRound();
         }
     }
 
-    public void makeTurn() {
-        if (this.currentRound != null) {
-            this.currentRound.makeTurn();
+    public ArrayList<RumourCard> getDiscardedCards() {
+        return this.rumourCards;
+    }
+
+    public boolean isGameEnded() {
+        for (Player p : this.players) {
+            if (p.getPoints() >= 5) {
+                return true;
+            }
         }
+        return false;
     }
 
     private class Round {
-        private ArrayList<Player> unrevealedPlayers;
-        private ArrayList<RumourCard> discard;
+        private final ArrayList<Player> unrevealedPlayers;
+        private final ArrayList<RumourCard> discard;
 
         public Round() {
             this.unrevealedPlayers = new ArrayList<>(players);
@@ -128,8 +119,27 @@ public class Game {
             return this.unrevealedPlayers.size() <= 1;
         }
 
+        public void makeRound() {
+            while (!this.isRoundEnded()) {
+                this.makeTurn();
+            }
+            this.endRound();
+        }
+
         public void makeTurn() {
-            System.out.println("yo");
+            System.out.println("C'est au tour de " + nextPlayer.getName());
+            nextPlayer = nextPlayer.playerTurn();
+        }
+
+        public void endRound() {
+            for (Player p : players) {
+                for (RumourCard hiddenCard : p.getCards()) {
+                    p.discardCard(hiddenCard);
+                }
+                for (RumourCard revealedCard : p.getRevealedCards()) {
+                    p.discardCard(revealedCard);
+                }
+            }
         }
     }
 }

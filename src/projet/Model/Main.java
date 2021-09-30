@@ -8,7 +8,7 @@ public class Main {
         System.out.print("Nombre de joueurs (entre 3 et 6) : ");
         int nbr_players = scan.nextInt();
         while (nbr_players < 3 || nbr_players > 6) {
-            System.out.print("Noùbre de joueurs invalide : ");
+            System.out.print("Nombre de joueurs invalide : ");
             nbr_players = scan.nextInt();
         }
         int nbr_ia = 0;
@@ -21,9 +21,10 @@ public class Main {
             }
         }
         Game game = new Game(nbr_players, nbr_ia);
-        game.startRound();
-        while (!game.isCurrentRoundEnded()) {
-            game.makeTurn();
-        }
+        game.makeGame();
+//        while (!game.isCurrentRoundEnded()) {
+//            game.makeTurn();
+//        }
+
     }
 }

@@ -1,20 +1,23 @@
 package projet.Model.cards;
 
+import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
+import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
-public class AngryMob extends AbstractRumourCard implements RumourCard {
+public final class AngryMob extends AbstractRumourCard implements RumourCard {
 
     @Override
-    public Player witchEffect(Player cardOwner) {
+    public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         return cardOwner;
     }
 
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
-        ArrayList<Player> revealable = this.getRevealablePlayers(cardOwner, allPlayers);
+        ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(cardOwner, allPlayers);
+
+        // if the Broomstick card has been revealed, remove its owner from the list of revealable players
         outerLoop:
         for (Player p : revealable) {
             for (RumourCard card : p.getRevealedCards()) {
@@ -24,7 +27,8 @@ public class AngryMob extends AbstractRumourCard implements RumourCard {
                 }
             }
         }
-        Player toReveal = this.shellPlayerSelection(revealable);
+        // TODO : implémenter le comportement de l'IA
+        Player toReveal = WitchHuntUtils.consoleSelectPlayer(revealable);
         toReveal.revealIdentity();
         if (toReveal.isWitch()) {
             cardOwner.addPoints(2);
@@ -35,5 +39,13 @@ public class AngryMob extends AbstractRumourCard implements RumourCard {
         }
     }
 
+    public boolean isWitchEffectUsable(Player cardOwner) {
+        // effect usable if the card has already revealed a rumour card
+        return (cardOwner.isRevealed() && !cardOwner.isWitch());
+    }
 
+    @Override
+    public String toString() {
+        return "AngryMob";
+    }
 }
