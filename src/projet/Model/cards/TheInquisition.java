@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public final class TheInquisition extends AbstractRumourCard implements RumourCard{
+    private int cardWeight = 2;
+
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         ArrayList<RumourCard> cards = cardOwner.getCards();

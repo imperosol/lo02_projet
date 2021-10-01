@@ -16,7 +16,6 @@ public class Game {
     private final ArrayList<RumourCard> rumourCards;
     private Player nextPlayer;
     private final int cardPerPlayer;
-//    private Round currentRound;
 
     public Game(int nbr_players, int nbr_ia) {
         this.cardPerPlayer = getCardPerPlayer(nbr_players);
@@ -133,6 +132,7 @@ public class Game {
 
         public void endRound() {
             for (Player p : players) {
+                p.hideIdentity();
                 for (RumourCard hiddenCard : p.getCards()) {
                     p.discardCard(hiddenCard);
                 }

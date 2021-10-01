@@ -6,6 +6,7 @@ import projet.Model.player.Player;
 import java.util.ArrayList;
 
 public interface RumourCard {
+
     Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser);
 
     Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers);

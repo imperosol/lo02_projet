@@ -32,12 +32,7 @@ public class HumanPlayer extends Player {
     @Override
     public Player defendAgainstAccusation(Player accuser) {
         System.out.println(this.getName() + ", vous venez d'être accusé.");
-        ArrayList<RumourCard> usableCards = new ArrayList<>(this.getCards().size());
-        for (RumourCard card : this.getCards()) {
-            if (card.isWitchEffectUsable(this)) {
-                usableCards.add(card);
-            }
-        }
+        ArrayList<RumourCard> usableCards = this.getCardsUsableForWitch();
         System.out.println("Vous pouvez utiliser les cartes suivantes : ");
         for (RumourCard card : usableCards) {
             System.out.println("\t- " + card);
@@ -69,7 +64,8 @@ public class HumanPlayer extends Player {
     public Player playerTurn() {
         System.out.println("Les cartes de votre main sont : ");
         for (RumourCard card : this.getCards()) {
-            System.out.println("\t- " + card);
+            System.out.println("\t- " + card
+                    + (card.isHuntEffectUsable(this) ? "" : "(Hunt inutilisable)"));
         }
         System.out.print("""
                 Voulez vous :\s
@@ -86,8 +82,10 @@ public class HumanPlayer extends Player {
             Player toDenounce = WitchHuntUtils.consoleSelectPlayer(revealable);
             nextPlayer = this.denounce(toDenounce);
         } else {
-            int cardIndex = WitchHuntUtils.consoleSelectCardIndex(this.getCards());
-            RumourCard card = this.getCards().get(cardIndex);
+            ArrayList <RumourCard> usable = this.getCardsUsableForHunt();
+            System.out.println("Choisisser une carte pour appliquer son effet Hunt : ");
+            RumourCard card = WitchHuntUtils.consoleSelectCard(usable);
+            this.revealCard(card);
             nextPlayer = card.huntEffect(this, this.game.getPlayers());
         }
         return nextPlayer;

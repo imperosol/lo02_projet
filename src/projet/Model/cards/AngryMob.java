@@ -27,8 +27,13 @@ public final class AngryMob extends AbstractRumourCard implements RumourCard {
                 }
             }
         }
-        // TODO : implémenter le comportement de l'IA
-        Player toReveal = WitchHuntUtils.consoleSelectPlayer(revealable);
+        Player toReveal;
+        if (cardOwner.isHuman()) {
+            toReveal = WitchHuntUtils.consoleSelectPlayer(revealable);
+        } else {
+            // TODO : implémenter le comportement de l'IA
+            toReveal = revealable.get(0);
+        }
         toReveal.revealIdentity();
         if (toReveal.isWitch()) {
             cardOwner.addPoints(2);

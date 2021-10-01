@@ -23,6 +23,10 @@ public abstract class Player {
         this.game = game;
     }
 
+    public Game getGame() {
+        return this.game;
+    }
+
     public abstract Player playerTurn();
 
     public String getName() {
@@ -50,7 +54,6 @@ public abstract class Player {
     public void giveCard(RumourCard card) {
         this.rumourCards.add(card);
     }
-
 
     public boolean isRevealed() {
         return this.isRevealed;
@@ -100,7 +103,7 @@ public abstract class Player {
         if (cardIndex < this.rumourCards.size() && cardIndex >= 0) {
             // if exist, remove the card from the rumourCard list and add it in the revealedCard list
             this.revealedCards.add(this.rumourCards.remove(cardIndex));
-        } else  {
+        } else {
             System.out.println("La carte n'est pas dans la main du joueur");
         }
     }
@@ -109,7 +112,7 @@ public abstract class Player {
         try {
             // if exist, remove the card from the rumourCard list and add it in the revealedCard list
             this.rumourCards.add(this.revealedCards.remove(this.revealedCards.indexOf(card)));
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("La carte n'appartient pas au joueur");
         }
     }
@@ -118,7 +121,7 @@ public abstract class Player {
         try {
             // if exist, remove the card from the rumourCard list and add it in the revealedCard list
             this.rumourCards.add(this.revealedCards.remove(cardIndex));
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("La carte n'appartient pas au joueur");
         }
     }
@@ -129,8 +132,28 @@ public abstract class Player {
              in the discard of the game */
             RumourCard toRemove = this.rumourCards.remove(this.rumourCards.indexOf(card));
             this.game.discardRumourCard(toRemove);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("La carte n'est pas dans la main du joueur");
         }
+    }
+
+    protected ArrayList<RumourCard> getCardsUsableForHunt() {
+        ArrayList<RumourCard> usable = new ArrayList<>(this.rumourCards.size());
+        for (RumourCard card : this.rumourCards) {
+            if (card.isHuntEffectUsable(this)) {
+                usable.add(card);
+            }
+        }
+        return usable;
+    }
+
+    protected ArrayList<RumourCard> getCardsUsableForWitch() {
+        ArrayList<RumourCard> usable = new ArrayList<>(this.rumourCards.size());
+        for (RumourCard card : this.rumourCards) {
+            if (card.isWitchEffectUsable(this)) {
+                usable.add(card);
+            }
+        }
+        return usable;
     }
 }
