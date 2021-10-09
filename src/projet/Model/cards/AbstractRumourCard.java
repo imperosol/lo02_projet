@@ -7,7 +7,7 @@ import projet.Model.utils.WitchHuntUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-abstract class AbstractRumourCard {
+public abstract class AbstractRumourCard {
 
     Player chooseNextPlayer(Player cardOwner, @NotNull List<Player> allPlayers) {
         Player nextPlayer = null;
