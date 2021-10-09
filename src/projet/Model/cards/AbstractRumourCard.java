@@ -7,8 +7,7 @@ import projet.Model.utils.WitchHuntUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractRumourCard {
-    private int cardWeight = 5;
+abstract class AbstractRumourCard {
 
     Player chooseNextPlayer(Player cardOwner, @NotNull List<Player> allPlayers) {
         Player nextPlayer = null;
@@ -18,5 +17,8 @@ public abstract class AbstractRumourCard {
         }
         // TODO : implémenter comportement IA
         return nextPlayer;
+    }
+    public static void getAllCards() {
+
     }
 }

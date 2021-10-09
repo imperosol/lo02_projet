@@ -1,6 +1,7 @@
 package projet.Model.player;
 
 import projet.Model.Game;
+import projet.Model.cards.Identity;
 import projet.Model.cards.RumourCard;
 import projet.Model.utils.WitchHuntUtils;
 

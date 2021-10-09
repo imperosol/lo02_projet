@@ -1,6 +1,8 @@
 package projet.Model.player;
 
 import projet.Model.Game;
+import projet.Model.cards.Identity;
+import projet.Model.cards.IdentityCard;
 import projet.Model.cards.RumourCard;
 
 import java.util.ArrayList;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 public abstract class Player {
     private final ArrayList<RumourCard> rumourCards;
     private ArrayList<RumourCard> revealedCards;
-    private Identity identity;
+    private IdentityCard identity;
     private final String name;
     private boolean isRevealed;
     private int points;
@@ -18,7 +20,7 @@ public abstract class Player {
         this.revealedCards = new ArrayList<>();
         this.name = name;
         this.points = 0;
-        this.identity = Identity.WITCH;
+        this.identity = new IdentityCard(Identity.WITCH);
         this.rumourCards = new ArrayList<>(nbr_of_cards);
         this.game = game;
     }
@@ -37,8 +39,8 @@ public abstract class Player {
         return rumourCards;
     }
 
-    public Identity getIdentity() {
-        return identity;
+    public String printIdentity() {
+        return identity.toString();
     }
 
     public abstract boolean isHuman();
@@ -74,11 +76,11 @@ public abstract class Player {
     public abstract Player defendAgainstAccusation(Player accuser);
 
     public boolean isWitch() {
-        return this.identity == Identity.WITCH;
+        return this.identity.getIdentity() == Identity.WITCH;
     }
 
     public void setIdentity(Identity newIdentity) {
-        this.identity = newIdentity;
+        this.identity.setIdentity(newIdentity);
     }
 
     public abstract void chooseIdentity();

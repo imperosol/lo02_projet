@@ -44,6 +44,7 @@ public final class AngryMob extends AbstractRumourCard implements RumourCard {
         }
     }
 
+    @Override
     public boolean isWitchEffectUsable(Player cardOwner) {
         // effect usable if the card has already revealed a rumour card
         return (cardOwner.isRevealed() && !cardOwner.isWitch());

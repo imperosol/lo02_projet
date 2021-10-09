@@ -19,8 +19,8 @@ public class Game {
 
     public Game(int nbr_players, int nbr_ia) {
         this.cardPerPlayer = getCardPerPlayer(nbr_players);
-        this.rumourCards = getRumourCards();
-        this.players = getPlayers(nbr_players, nbr_ia, this.cardPerPlayer);
+        this.rumourCards = createRumourCards();
+        this.players = createPlayers(nbr_players, nbr_ia, this.cardPerPlayer);
         Random randomSeed = new Random();
         this.nextPlayer = this.players.get(randomSeed.nextInt(nbr_players));
     }
@@ -36,7 +36,7 @@ public class Game {
         return card_per_player;
     }
 
-    private @NotNull ArrayList<Player> getPlayers(int nbr_players, int nbr_ia, int card_per_player) {
+    private @NotNull ArrayList<Player> createPlayers(int nbr_players, int nbr_ia, int card_per_player) {
         final ArrayList<Player> newPlayers = new ArrayList<>(nbr_players);
 
         for (int i = 0; i < nbr_ia; i++) {
@@ -48,7 +48,7 @@ public class Game {
         return newPlayers;
     }
 
-    private @NotNull ArrayList<RumourCard> getRumourCards() {
+    private @NotNull ArrayList<RumourCard> createRumourCards() {
         final ArrayList<RumourCard> cards = new ArrayList<>(12);
         Collections.addAll(
                 cards, new AngryMob(), new TheInquisition(), new PointedHat(),
@@ -106,16 +106,23 @@ public class Game {
     }
 
     private class Round {
-        private final ArrayList<Player> unrevealedPlayers;
         private final ArrayList<RumourCard> discard;
 
         public Round() {
-            this.unrevealedPlayers = new ArrayList<>(players);
             this.discard = rumourCards;
         }
 
         public boolean isRoundEnded() {
-            return this.unrevealedPlayers.size() <= 1;
+            int revealedPlayers = 0;
+            for (Player p : players) {
+                if (p.isRevealed()) {
+                    if (revealedPlayers == 0)
+                        revealedPlayers++;
+                    else
+                        return false;
+                }
+            }
+            return true;
         }
 
         public void makeRound() {
