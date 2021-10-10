@@ -38,7 +38,6 @@ public class Game {
 
     private @NotNull ArrayList<Player> createPlayers(int nbr_players, int nbr_ia, int card_per_player) {
         final ArrayList<Player> newPlayers = new ArrayList<>(nbr_players);
-
         for (int i = 0; i < nbr_ia; i++) {
             newPlayers.add(new ComputerPlayer(card_per_player, "Joueur " + i + " (IA)", this));
         }

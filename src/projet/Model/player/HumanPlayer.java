@@ -1,5 +1,6 @@
 package projet.Model.player;
 
+import org.jetbrains.annotations.NotNull;
 import projet.Model.Game;
 import projet.Model.cards.Identity;
 import projet.Model.cards.RumourCard;
@@ -46,13 +47,7 @@ public class HumanPlayer extends Player {
         int choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
         Player nextPlayer;
         if (choice == 1) {
-            this.revealIdentity();
-            if (this.isWitch()) {
-                accuser.addPoints(1);
-                nextPlayer = accuser;
-            } else {
-                nextPlayer = this;
-            }
+            nextPlayer = this.revealIdentityAfterAccusation(accuser);
         } else {
             int cardIndex = WitchHuntUtils.consoleSelectCardIndex(usableCards);
             RumourCard card = usableCards.get(cardIndex);
@@ -60,6 +55,7 @@ public class HumanPlayer extends Player {
         }
         return nextPlayer;
     }
+
 
     @Override
     public Player playerTurn() {

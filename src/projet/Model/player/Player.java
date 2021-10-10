@@ -9,12 +9,12 @@ import java.util.ArrayList;
 
 public abstract class Player {
     private final ArrayList<RumourCard> rumourCards;
-    private ArrayList<RumourCard> revealedCards;
-    private IdentityCard identity;
+    private final ArrayList<RumourCard> revealedCards;
+    private final IdentityCard identity;
     private final String name;
     private boolean isRevealed;
     private int points;
-    Game game; // game is not private cause HumanPlayer et ComputerPlayer must access it
+    Game game; // game is not private cause HumanPlayer and ComputerPlayer must access it
 
     public Player(int nbr_of_cards, String name, Game game) {
         this.revealedCards = new ArrayList<>();
@@ -157,5 +157,17 @@ public abstract class Player {
             }
         }
         return usable;
+    }
+
+    protected Player revealIdentityAfterAccusation(Player accuser) {
+        Player nextPlayer;
+        this.revealIdentity();
+        if (this.isWitch()) {
+            accuser.addPoints(1);
+            nextPlayer = accuser;
+        } else {
+            nextPlayer = this;
+        }
+        return nextPlayer;
     }
 }

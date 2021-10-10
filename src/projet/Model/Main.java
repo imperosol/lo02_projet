@@ -13,6 +13,5 @@ public class Main {
         }
         Game game = new Game(nbr_players, nbr_ia);
         game.makeGame();
-
     }
 }
