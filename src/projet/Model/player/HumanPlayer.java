@@ -1,6 +1,5 @@
 package projet.Model.player;
 
-import org.jetbrains.annotations.NotNull;
 import projet.Model.Game;
 import projet.Model.cards.Identity;
 import projet.Model.cards.RumourCard;

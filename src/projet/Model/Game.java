@@ -115,13 +115,14 @@ public class Game {
             int revealedPlayers = 0;
             for (Player p : players) {
                 if (p.isRevealed()) {
-                    if (revealedPlayers == 0)
+                    if (revealedPlayers == 0) {
                         revealedPlayers++;
-                    else
-                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             }
-            return true;
+            return false;
         }
 
         public void makeRound() {
@@ -132,6 +133,7 @@ public class Game {
         }
 
         public void makeTurn() {
+            System.out.println("Yo");
             System.out.println("C'est au tour de " + nextPlayer.getName());
             nextPlayer = nextPlayer.playerTurn();
         }
