@@ -5,21 +5,23 @@ import projet.Model.player.Player;
 import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
-public final class TheInquisition extends AbstractRumourCard implements RumourCard{
-    private int cardWeight = 2;
+public final class TheInquisition extends AbstractRumourCard implements RumourCard {
+    private final static int cardWeight = 2;
 
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         ArrayList<RumourCard> cards = cardOwner.getCards();
+        RumourCard toDiscard;
         if (cardOwner.isHuman()) {
             System.out.println("Défaussez une carte parmi :");
-            for (int i = 0; i < cards.size(); i++) {
-                System.out.println(i+1 + " : " + cards.get(i));
-            }
-            int choice = WitchHuntUtils.consoleIntegerChoice(1, cards.size());
-            cardOwner.discardCard(cards.get(choice - 1));
+            toDiscard = WitchHuntUtils.consoleSelectCard(cards);
+        } else {
+            int cardIndex = new Random().nextInt(cards.size());
+            toDiscard = cards.get(cardIndex);
         }
+        cardOwner.discardCard(toDiscard);
         return cardOwner;
     }
 

@@ -4,16 +4,13 @@ import projet.Model.Game;
 import projet.Model.cards.Identity;
 import projet.Model.cards.RumourCard;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author thgir
  */
 public class ComputerPlayer extends Player {
-    private Map<Player, Integer> nbrOfAccusers;
+    private final Map<Player, Integer> nbrOfAccusers;
     AIStrategy strategy;
 
     public ComputerPlayer(int nbr_of_cards, String name, Game game) {
@@ -55,21 +52,35 @@ public class ComputerPlayer extends Player {
             // if the player cannot use a card, he reveals his identity
             nextPlayer = this.revealIdentityAfterAccusation(accuser);
         } else if (!this.isWitch()) {
-            /* If the player is a villager a die 5 is launched.
-            * The result determines if he reveals his identity or defends with a rumour card
-            * The less the player has cards in hand, the more likely he is to reveal his identity */
+            /* If the player is a villager a die 0-4 is launched.
+             * If the result is greater than the number of cards, he reveals his identity
+             * Else he reveals a card and use its witch effect
+             * Example : the player has 3 cards in hand and the randomly generated number is 4 : reveal identity
+             *           the player has 2 cards in hand and the randomly generated number is 1 : reveal card
+             *           the player has 3 cards in hand and the randomly generated number is 3 : reveal card */
             int choice = new Random().nextInt(5);
-            if (choice >= this.getCards().size()) {
-                nextPlayer = this.strategy.applyWitchEffect(this, usableWitch);
+            if (choice >= this.rumourCards.size()) {
+                nextPlayer = this.defendWithWitch(usableWitch, accuser);
             } else {
                 nextPlayer = this.revealIdentityAfterAccusation(accuser);
             }
         } else {
             /* If the player is a witch and has at least one usable card, he has no choice
             * but to defend himself against his accuser by revealing a rumour card */
-            nextPlayer = this.strategy.applyWitchEffect(this, usableWitch);
+            nextPlayer = this.defendWithWitch(usableWitch, accuser);
         }
         return nextPlayer;
+    }
+
+    private Player defendWithWitch(ArrayList<RumourCard> usableWitch, Player accuser) {
+        int cardIndex = new Random().nextInt(usableWitch.size());
+        RumourCard chosenCard = usableWitch.get(cardIndex);
+        return chosenCard.witchEffect(this, this.game.getPlayers(), accuser);
+    }
+
+    @Override
+    public Player selectNextPlayer(ArrayList<Player> selectablePlayers) {
+        return this.strategy.selectNextPlayer(this, selectablePlayers);
     }
 
     @Override
@@ -85,6 +96,7 @@ public class ComputerPlayer extends Player {
             this.setIdentity(Identity.VILLAGER);
         }
     }
+
 
     @Override
     public Player playerTurn() {

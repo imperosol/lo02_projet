@@ -10,15 +10,7 @@ import java.util.List;
 public abstract class AbstractRumourCard {
 
     Player chooseNextPlayer(Player cardOwner, @NotNull List<Player> allPlayers) {
-        Player nextPlayer = null;
         ArrayList<Player> selectablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
-        if (cardOwner.isHuman()) {
-            nextPlayer = WitchHuntUtils.consoleSelectPlayer(selectablePlayers);
-        }
-        // TODO : implémenter comportement IA
-        return nextPlayer;
-    }
-    public static void getAllCards() {
-
+        return cardOwner.selectNextPlayer(selectablePlayers);
     }
 }

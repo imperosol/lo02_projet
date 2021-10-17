@@ -8,8 +8,8 @@ import projet.Model.cards.RumourCard;
 import java.util.ArrayList;
 
 public abstract class Player {
-    private final ArrayList<RumourCard> rumourCards;
-    private final ArrayList<RumourCard> revealedCards;
+    protected final ArrayList<RumourCard> rumourCards;
+    protected final ArrayList<RumourCard> revealedCards;
     private final IdentityCard identity;
     private final String name;
     private boolean isRevealed;
@@ -170,4 +170,6 @@ public abstract class Player {
         }
         return nextPlayer;
     }
+
+    public abstract Player selectNextPlayer(ArrayList<Player> selectablePlayers);
 }

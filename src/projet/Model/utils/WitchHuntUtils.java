@@ -55,6 +55,12 @@ public class WitchHuntUtils {
         return selectablePlayers;
     }
 
+    /**
+     *
+     * @param cardOwner address to the Player instance which owns the cards
+     * @param allPlayers List of all players taking part in the game, whether there identity has been revealed or not
+     * @return an ArrayList of all players who are not the card owner and whose identity has not been revealed yet
+     */
     @NotNull
     public static ArrayList<Player> getRevealablePlayers(Player cardOwner, @NotNull List<Player> allPlayers) {
         ArrayList<Player> revealablePlayers = new ArrayList<>();

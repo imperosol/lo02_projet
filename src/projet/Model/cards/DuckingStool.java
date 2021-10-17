@@ -11,12 +11,7 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         ArrayList<Player> selectablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
-        if (cardOwner.isHuman()) {
-            return WitchHuntUtils.consoleSelectPlayer(selectablePlayers);
-        } else {
-            // TODO : implémenter comportement IA
-            return cardOwner;
-        }
+        return cardOwner.selectNextPlayer(selectablePlayers);
     }
 
     @Override

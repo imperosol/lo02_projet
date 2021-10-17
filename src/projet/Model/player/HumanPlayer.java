@@ -31,6 +31,11 @@ public class HumanPlayer extends Player {
     }
 
     @Override
+    public Player selectNextPlayer(ArrayList<Player> selectablePlayers) {
+        return WitchHuntUtils.consoleSelectPlayer(selectablePlayers);
+    }
+
+    @Override
     public Player defendAgainstAccusation(Player accuser) {
         System.out.println(this.getName() + ", vous venez d'être accusé.");
         ArrayList<RumourCard> usableCards = this.getCardsUsableForWitch();

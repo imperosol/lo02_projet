@@ -5,6 +5,7 @@ import projet.Model.player.Player;
 import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public final class PointedHat extends AbstractRumourCard implements RumourCard{
     @Override
@@ -20,14 +21,14 @@ public final class PointedHat extends AbstractRumourCard implements RumourCard{
     }
 
     private void takeOneOfOwnRevealedCards(Player cardOwner) {
+        // This method is used by both the huntEffect and the witchEffect methods of this class
         ArrayList<RumourCard> cards = cardOwner.getRevealedCards();
         int choice;
         if (cardOwner.isHuman()) {
             System.out.println("Récupérez une carte parmi les suivantes :");
             choice = WitchHuntUtils.consoleSelectCardIndex(cards);
         } else {
-            choice = 0;
-            // TODO : implement AI behaviour for getting a revealed rumour card
+            choice = new Random().nextInt(cards.size());
         }
         cardOwner.hideCard(choice);
     }

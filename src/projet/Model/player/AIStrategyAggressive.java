@@ -20,7 +20,7 @@ public class AIStrategyAggressive implements AIStrategy {
     }
 
     @Override
-    public Player applyWitchEffect(Player cardOwner, List<RumourCard> rumourCards) {
+    public Player applyWitchEffect(Player cardOwner, List<RumourCard> usableCards) {
         // TODO : implémenter cette méthode
         return null;
     }
@@ -36,5 +36,12 @@ public class AIStrategyAggressive implements AIStrategy {
         } else {
             return ACCUSE_PLAYER;
         }
+    }
+
+    @Override
+    public Player selectNextPlayer(ComputerPlayer strategyOwner, List<Player> selectablePlayers) {
+        // select a random player
+        int index = new Random().nextInt(selectablePlayers.size());
+        return selectablePlayers.get(index);
     }
 }

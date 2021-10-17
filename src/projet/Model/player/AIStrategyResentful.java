@@ -20,7 +20,7 @@ public class AIStrategyResentful implements AIStrategy {
         return accuserMax;
     }
 
-    public Player applyWitchEffect(Player cardOwner, List<RumourCard> rumourCards) {
+    public Player applyWitchEffect(Player cardOwner, List<RumourCard> usableCards) {
         return null;
     }
 
@@ -36,6 +36,21 @@ public class AIStrategyResentful implements AIStrategy {
         } else {
             return ACCUSE_PLAYER;
         }
+    }
+
+    @Override
+    public Player selectNextPlayer(ComputerPlayer strategyOwner, List<Player> selectablePlayers) {
+        // Select the player which has the less accused the current player
+        Map<Player, Integer> previousAccusers = strategyOwner.getAccusers();
+        int min = 100;
+        Player chosenPlayer = null;
+        for (Player p : selectablePlayers) {
+            if (previousAccusers.get(p) < min) {
+                min = previousAccusers.get(p);
+                chosenPlayer = p;
+            }
+        }
+        return chosenPlayer;
     }
 
 }
