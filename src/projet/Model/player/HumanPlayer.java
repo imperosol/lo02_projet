@@ -46,7 +46,7 @@ public class HumanPlayer extends Player {
         System.out.print("""
                 Voulez vous :\s
                 1 : Révéler votre identité
-                2 : révéler une carte et appliquer son effet Witch
+                2 : Révéler une carte et appliquer son effet Witch
                 \t->\040""");
         int choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
         Player nextPlayer;
@@ -56,10 +56,24 @@ public class HumanPlayer extends Player {
             int cardIndex = WitchHuntUtils.consoleSelectCardIndex(usableCards);
             RumourCard card = usableCards.get(cardIndex);
             nextPlayer = card.witchEffect(this, this.game.getPlayers(), accuser);
+            this.revealCard(card);
         }
         return nextPlayer;
     }
 
+    public Player getPlayerToAccuse(Player toExclude) {
+        ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(
+                this,
+                this.game.getPlayers()
+        );
+        revealable.remove(toExclude);
+        return WitchHuntUtils.consoleSelectPlayer(revealable);
+    }
+
+    @Override
+    public void lookAtIdentity(Player lookedPlayer) {
+        System.out.println("Identité de " + lookedPlayer + " : " + lookedPlayer.printIdentity());
+    }
 
     @Override
     public Player playerTurn() {
@@ -75,16 +89,12 @@ public class HumanPlayer extends Player {
                 \t->\040""");
         int choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
         Player nextPlayer;
-        if (choice == 1) {
-            ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(
-                    this,
-                    this.game.getPlayers()
-            );
-            Player toDenounce = WitchHuntUtils.consoleSelectPlayer(revealable);
-            nextPlayer = this.denounce(toDenounce);
-        } else {
+        if (choice == 1) {  // accuse player
+            Player toDenounce = this.getPlayerToAccuse(null);
+            nextPlayer = this.accuse(toDenounce);
+        } else {  // use rumour card
             ArrayList <RumourCard> usable = this.getCardsUsableForHunt();
-            System.out.println("Choisisser une carte pour appliquer son effet Hunt : ");
+            System.out.println("Choisissez une carte pour appliquer son effet Hunt : ");
             RumourCard card = WitchHuntUtils.consoleSelectCard(usable);
             this.revealCard(card);
             nextPlayer = card.huntEffect(this, this.game.getPlayers());

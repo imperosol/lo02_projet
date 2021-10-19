@@ -11,11 +11,14 @@ import java.util.*;
  */
 public class ComputerPlayer extends Player {
     private final Map<Player, Integer> nbrOfAccusers;
+    private final ArrayList<Player> secretlyKnownPlayer;
     AIStrategy strategy;
+
 
     public ComputerPlayer(int nbr_of_cards, String name, Game game) {
         super(nbr_of_cards, name, game);
         this.nbrOfAccusers = new HashMap<>();
+        this.secretlyKnownPlayer = new ArrayList<>();
         int strat = new Random().nextInt(2);
         if (strat == 0)
             this.strategy = new AIStrategyResentful();
@@ -26,6 +29,25 @@ public class ComputerPlayer extends Player {
     @Override
     public boolean isHuman() {
         return false;
+    }
+
+    @Override
+    public Player getPlayerToAccuse(Player toExclude) {
+        return this.strategy.getPlayerToAccuse(this, toExclude);
+    }
+
+    @Override
+    public void lookAtIdentity(Player lookedPlayer) {
+        System.out.println(lookedPlayer + ", " + this + " connait à présent votre identité");
+        this.secretlyKnownPlayer.add(lookedPlayer);
+    }
+
+    public String strategyString() {
+        if (this.strategy instanceof AIStrategyAggressive) {
+            return "Aggressive";
+        } else {
+            return "Resentful";
+        }
     }
 
     private void rememberAccusation(Player accuser) {
@@ -39,8 +61,18 @@ public class ComputerPlayer extends Player {
         }
     }
 
+    private void updateKnownPlayerList() {
+        // if players were known secretly but have been revealed in the mean time
+        // then they are no more secret
+        this.secretlyKnownPlayer.removeIf(Player::isRevealed);
+    }
+
     public Map<Player, Integer> getAccusers() {
         return nbrOfAccusers;
+    }
+
+    public ArrayList<Player> getSecretlyKnownPlayer() {
+        return secretlyKnownPlayer;
     }
 
     @Override
@@ -51,6 +83,7 @@ public class ComputerPlayer extends Player {
         if (usableWitch.size() == 0) {
             // if the player cannot use a card, he reveals his identity
             nextPlayer = this.revealIdentityAfterAccusation(accuser);
+            System.out.println(this.getName() + " révèle son identité : " + this.printIdentity());
         } else if (!this.isWitch()) {
             /* If the player is a villager a die 0-4 is launched.
              * If the result is greater than the number of cards, he reveals his identity
@@ -63,6 +96,7 @@ public class ComputerPlayer extends Player {
                 nextPlayer = this.defendWithWitch(usableWitch, accuser);
             } else {
                 nextPlayer = this.revealIdentityAfterAccusation(accuser);
+                System.out.println(this.getName() + " révèle son identité : " + this.printIdentity());
             }
         } else {
             /* If the player is a witch and has at least one usable card, he has no choice
@@ -73,8 +107,11 @@ public class ComputerPlayer extends Player {
     }
 
     private Player defendWithWitch(ArrayList<RumourCard> usableWitch, Player accuser) {
+        // TODO : résolution aléatoire, à améliorer
         int cardIndex = new Random().nextInt(usableWitch.size());
         RumourCard chosenCard = usableWitch.get(cardIndex);
+        this.revealCard(chosenCard);
+        System.out.println(this.getName() + " se défend avec le witch de  " + chosenCard);
         return chosenCard.witchEffect(this, this.game.getPlayers(), accuser);
     }
 
@@ -100,13 +137,20 @@ public class ComputerPlayer extends Player {
 
     @Override
     public Player playerTurn() {
-        // TODO : implémenter comportement IA pour un tour de jeu
+        this.updateKnownPlayerList();
         int choice = this.strategy.getAttackAction(this);
         if (choice == 1) { // accuse player
-            Player toAccuse = this.strategy.getPlayerToAccuse(this);
-            return this.denounce(toAccuse);
+            Player toAccuse = this.getPlayerToAccuse(null);
+            System.out.println(this.getName() + " accuse " + toAccuse.getName());
+            return this.accuse(toAccuse);
         } else { // reveal card
-            return this;
+            // TODO : entièrement aléatoire, à améliorer
+            ArrayList<RumourCard> usableCards = this.getCardsUsableForHunt();
+            int cardIndex = new Random().nextInt(usableCards.size());
+            RumourCard card = usableCards.get(cardIndex);
+            this.revealCard(card);
+            System.out.println(this.getName() + " utilise le hunt de " + card);
+            return card.huntEffect(this, this.game.getPlayers());
         }
     }
 }

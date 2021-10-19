@@ -13,8 +13,7 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
         // the accuser discards a random card
         Random rand = new Random();
         ArrayList<RumourCard> accuserCards = accuser.getCards();
-        RumourCard toDiscard = accuserCards.get(rand.nextInt(accuserCards.size()));
-        cardOwner.revealCard(toDiscard);
+        accuser.discardCard(accuserCards.get(rand.nextInt(accuserCards.size())));
         return cardOwner;
     }
 
@@ -26,15 +25,7 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
             int playerIndex = allPlayers.indexOf(cardOwner);
             return allPlayers.get(playerIndex + 1);
         } else {
-            Player nextPlayer;
-            ArrayList<Player> revealablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
-            if (cardOwner.isHuman()) {
-                nextPlayer = WitchHuntUtils.consoleSelectPlayer(revealablePlayers);
-            } else {
-                // TODO : implémenter comportement IA
-                nextPlayer = revealablePlayers.get(0);
-            }
-            return nextPlayer;
+            return this.chooseNextPlayer(cardOwner, allPlayers);
         }
     }
 

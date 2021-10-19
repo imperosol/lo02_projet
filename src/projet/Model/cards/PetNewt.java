@@ -5,6 +5,7 @@ import projet.Model.player.Player;
 import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public final class PetNewt extends AbstractRumourCard implements RumourCard {
     @Override
@@ -20,8 +21,7 @@ public final class PetNewt extends AbstractRumourCard implements RumourCard {
             System.out.println("Récupérez une carte parmi les suivantes :");
             choice = WitchHuntUtils.consoleSelectCardIndex(revealedCards);
         } else {
-            // TODO : implémenter comportement IA
-            choice = 0;
+            choice = new Random().nextInt(revealedCards.size());
         }
         RumourCard card = revealedCards.get(choice);
         Player opponent = this.getCardOwner(card, allPlayers);

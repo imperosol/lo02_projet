@@ -1,27 +1,90 @@
 package projet.Model.player;
 
-import projet.Model.cards.RumourCard;
+import projet.Model.utils.WitchHuntUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class AIStrategyResentful implements AIStrategy {
-    public Player getPlayerToAccuse(ComputerPlayer strategyUser) {
-        Map<Player, Integer> previousAccusers = strategyUser.getAccusers();
-        int maxAccusation = -1;
-        Player accuserMax = null;
-        for (Player key : previousAccusers.keySet()) {
-            if (previousAccusers.get(key) > maxAccusation) {
-                maxAccusation = previousAccusers.get(key);
-                accuserMax = key;
+
+    private Player getPlayerFromKnownWithoutResent(ArrayList<Player> secretlyKnown) {
+        ArrayList<Player> revealableKnown = new ArrayList<>();
+        for (Player p : secretlyKnown) {
+            if (p.isWitch()) {
+                revealableKnown.add(p);
             }
         }
-        return accuserMax;
+        if (revealableKnown.size() == 0) {
+            return null;
+        } else {
+            return revealableKnown.get(new Random().nextInt(revealableKnown.size()));
+        }
     }
 
-    public Player applyWitchEffect(Player cardOwner, List<RumourCard> usableCards) {
-        return null;
+    private Player getPlayerFromKnownWithResent(ArrayList<Player> secretlyKnown, Map<Player, Integer> previousAccusers) {
+        int maxAccusation = -1;
+        Player toChoose = null;
+        for (Player p : secretlyKnown) {
+            if (p.isWitch() && previousAccusers.containsKey(p)) {
+                if (previousAccusers.get(p) > maxAccusation) {
+                    maxAccusation = previousAccusers.get(p);
+                    toChoose = p;
+                }
+            }
+        }
+        return toChoose;
+    }
+
+    private Player getPlayerFromUnknownWithResent(ArrayList<Player> secretlyKnown, Map<Player, Integer> previousAccusers) {
+        int maxAccusation = -1;
+        Player toChoose = null;
+        for (Player p : previousAccusers.keySet()) {
+            if (previousAccusers.get(p) > maxAccusation && !secretlyKnown.contains(p)) {
+                maxAccusation = previousAccusers.get(p);
+                toChoose = p;
+            }
+        }
+        return toChoose;
+    }
+
+    private Player getPlayerFromUnknownWithoutResent(ArrayList<Player> revealable, ArrayList<Player> secretlyKnown) {
+        ArrayList<Player> accuseList = new ArrayList<>();
+        for (Player p : revealable) {
+            if (!secretlyKnown.contains(p)) {
+                accuseList.add(p);
+            }
+        }
+        if (accuseList.size() > 0) {
+            return accuseList.get(new Random().nextInt(accuseList.size()));
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public Player getPlayerToAccuse(ComputerPlayer strategyUser, Player toExclude) {
+        /* the resentful AI always accuse the player who has accused him the most.
+         * The players whose identity is known are prioritized over those who are not known */
+        ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(strategyUser, strategyUser.game.getPlayers());
+        revealable.remove(toExclude);
+        ArrayList<Player> secretlyKnown = strategyUser.getSecretlyKnownPlayer();
+        Map<Player, Integer> previousAccusers = strategyUser.getAccusers();
+        Player toChoose = this.getPlayerFromKnownWithResent(secretlyKnown, previousAccusers);
+        if (toChoose == null) {
+            toChoose = this.getPlayerFromKnownWithoutResent(secretlyKnown);
+            if (toChoose == null) {
+                toChoose = this.getPlayerFromUnknownWithResent(secretlyKnown, previousAccusers);
+                if (toChoose == null) {
+                    toChoose = this.getPlayerFromUnknownWithoutResent(revealable, secretlyKnown);
+                    if (toChoose == null) {
+                        toChoose = revealable.get(new Random().nextInt(revealable.size()));
+                    }
+                }
+            }
+        }
+        return toChoose;
     }
 
     @Override
@@ -45,9 +108,11 @@ public class AIStrategyResentful implements AIStrategy {
         int min = 100;
         Player chosenPlayer = null;
         for (Player p : selectablePlayers) {
-            if (previousAccusers.get(p) < min) {
-                min = previousAccusers.get(p);
-                chosenPlayer = p;
+            if (previousAccusers.containsKey(p)) {
+                if (previousAccusers.get(p) < min) {
+                    min = previousAccusers.get(p);
+                    chosenPlayer = p;
+                }
             }
         }
         return chosenPlayer;

@@ -20,15 +20,7 @@ public final class Toad extends AbstractRumourCard implements RumourCard{
             int playerIndex = allPlayers.indexOf(cardOwner);
             return allPlayers.get(playerIndex + 1);
         } else {
-            Player nextPlayer;
-            ArrayList<Player> revealablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
-            if (cardOwner.isHuman()) {
-                nextPlayer = WitchHuntUtils.consoleSelectPlayer(revealablePlayers);
-            } else {
-                // TODO : implémenter comportement IA
-                nextPlayer = revealablePlayers.get(0);
-            }
-            return nextPlayer;
+            return this.chooseNextPlayer(cardOwner, allPlayers);
         }
     }
 

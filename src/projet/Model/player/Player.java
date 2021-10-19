@@ -69,7 +69,11 @@ public abstract class Player {
         this.isRevealed = false;
     }
 
-    public Player denounce(Player accusedPlayer) {
+    public abstract Player getPlayerToAccuse(Player toExclude);
+
+    public abstract void lookAtIdentity(Player lookedPlayer);
+
+    public Player accuse(Player accusedPlayer) {
         return accusedPlayer.defendAgainstAccusation(this);
     }
 
@@ -101,15 +105,6 @@ public abstract class Player {
         }
     }
 
-    public void revealCard(int cardIndex) {
-        if (cardIndex < this.rumourCards.size() && cardIndex >= 0) {
-            // if exist, remove the card from the rumourCard list and add it in the revealedCard list
-            this.revealedCards.add(this.rumourCards.remove(cardIndex));
-        } else {
-            System.out.println("La carte n'est pas dans la main du joueur");
-        }
-    }
-
     public void hideCard(RumourCard card) {
         try {
             // if exist, remove the card from the rumourCard list and add it in the revealedCard list
@@ -132,10 +127,22 @@ public abstract class Player {
         try {
             /* if exist, remove the card from the rumourCard list and add it
              in the discard of the game */
-            RumourCard toRemove = this.rumourCards.remove(this.rumourCards.indexOf(card));
-            this.game.discardRumourCard(toRemove);
+            this.rumourCards.remove(card);
+            this.game.discardRumourCard(card);
         } catch (Exception e) {
             System.out.println("La carte n'est pas dans la main du joueur");
+        }
+    }
+
+    public String strategyString() {
+        return "";}
+
+    public void discardAllCards() {
+        while (this.rumourCards.size() > 0) {
+            this.discardCard(this.rumourCards.get(0));
+        }
+        while (this.revealedCards.size() > 0) {
+            this.discardCard(this.revealedCards.get(0));
         }
     }
 
@@ -159,16 +166,14 @@ public abstract class Player {
         return usable;
     }
 
-    protected Player revealIdentityAfterAccusation(Player accuser) {
-        Player nextPlayer;
+    public Player revealIdentityAfterAccusation(Player accuser) {
         this.revealIdentity();
         if (this.isWitch()) {
             accuser.addPoints(1);
-            nextPlayer = accuser;
+            return accuser;
         } else {
-            nextPlayer = this;
+            return this;
         }
-        return nextPlayer;
     }
 
     public abstract Player selectNextPlayer(ArrayList<Player> selectablePlayers);

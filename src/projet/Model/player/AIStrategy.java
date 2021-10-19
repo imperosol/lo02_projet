@@ -5,9 +5,7 @@ import projet.Model.cards.RumourCard;
 import java.util.List;
 
 public interface AIStrategy {
-    Player getPlayerToAccuse(ComputerPlayer strategyUser);
-
-    Player applyWitchEffect(Player cardOwner, List<RumourCard> usableCards);
+    Player getPlayerToAccuse(ComputerPlayer strategyUser, Player toExclude);
 
     /**
      * Determines if the computer player using the strategy shall accuse a player or reveal a rumour card

@@ -5,8 +5,9 @@ import projet.Model.player.Player;
 import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
-public final class BlackCat extends AbstractRumourCard implements RumourCard{
+public final class BlackCat extends AbstractRumourCard implements RumourCard {
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         return cardOwner;
@@ -20,7 +21,9 @@ public final class BlackCat extends AbstractRumourCard implements RumourCard{
         if (cardOwner.isHuman()) {
             System.out.println("Récupérez une carte parmi les suivantes :");
             choice = WitchHuntUtils.consoleSelectCardIndex(discard);
-        } else { choice = 0; }
+        } else {
+            choice = new Random().nextInt(discard.size());
+        }
         RumourCard takenCard = discard.remove(choice);
         cardOwner.giveCard(takenCard);
         return cardOwner;

@@ -30,7 +30,7 @@ public final class HookedNose extends AbstractRumourCard implements RumourCard{
         RumourCard card = nextPlayerCards.remove(cardIndex);
         cardOwner.giveCard(card);
         if (cardOwner.isHuman()) {
-            System.out.println("Vous avez récupéré la carte : " + card);
+            System.out.println(cardOwner.printIdentity() + ", vous avez récupéré la carte : " + card);
         }
     }
 

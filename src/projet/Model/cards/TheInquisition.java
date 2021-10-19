@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public final class TheInquisition extends AbstractRumourCard implements RumourCard {
-    private final static int cardWeight = 2;
 
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
@@ -28,10 +27,7 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         Player nextPlayer = this.chooseNextPlayer(cardOwner, allPlayers);
-        if (cardOwner.isHuman()) {
-            System.out.println("Identité de " + nextPlayer + " : " + nextPlayer.printIdentity());
-        }
-        // TODO : implémenter le fait de connaitre l'identité du joueur choisi
+        cardOwner.lookAtIdentity(nextPlayer);
         return nextPlayer;
     }
 

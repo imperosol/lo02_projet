@@ -17,12 +17,12 @@ public class Game {
     private Player nextPlayer;
     private final int cardPerPlayer;
 
-    public Game(int nbr_players, int nbr_ia) {
-        this.cardPerPlayer = getCardPerPlayer(nbr_players);
+    public Game(int nbr_humans, int nbr_ia) {
+        this.cardPerPlayer = getCardPerPlayer(nbr_humans + nbr_ia);
         this.rumourCards = createRumourCards();
-        this.players = createPlayers(nbr_players, nbr_ia, this.cardPerPlayer);
-        Random randomSeed = new Random();
-        this.nextPlayer = this.players.get(randomSeed.nextInt(nbr_players));
+        this.players = createPlayers(nbr_humans, nbr_ia, this.cardPerPlayer);
+        Random random = new Random();
+        this.nextPlayer = this.players.get(random.nextInt(this.players.size()));
     }
 
 
@@ -36,13 +36,13 @@ public class Game {
         return card_per_player;
     }
 
-    private @NotNull ArrayList<Player> createPlayers(int nbr_players, int nbr_ia, int card_per_player) {
-        final ArrayList<Player> newPlayers = new ArrayList<>(nbr_players);
+    private @NotNull ArrayList<Player> createPlayers(int nbr_humans, int nbr_ia, int card_per_player) {
+        final ArrayList<Player> newPlayers = new ArrayList<>(nbr_humans + nbr_ia);
+        for (int i = 0; i < nbr_humans; i++) {
+            newPlayers.add(new HumanPlayer(card_per_player, "Joueur " + i + " (humain)", this));
+        }
         for (int i = 0; i < nbr_ia; i++) {
             newPlayers.add(new ComputerPlayer(card_per_player, "Joueur " + i + " (IA)", this));
-        }
-        for (int i = nbr_ia; i < nbr_players; i++) {
-            newPlayers.add(new HumanPlayer(card_per_player, "Joueur " + i + " (humain)", this));
         }
         return newPlayers;
     }
@@ -84,6 +84,15 @@ public class Game {
 
     public void makeGame() {
         while (!this.isGameEnded()) {
+            for (Player p : this.players) {
+                if (!p.isHuman()) {
+                    System.out.println(p.getGame() + " : stratégie " + p.strategyString());
+                }
+            }
+//            System.out.println("Nouveau round");
+//            for (Player p : this.players) {
+//                System.out.println(p.getName() + " (nombre de points : " + p.getPoints() + ")");
+//            }
             this.distributeRumourCards();
             this.assignRoles();
             Round currentRound = new Round();
@@ -114,18 +123,19 @@ public class Game {
         public boolean isRoundEnded() {
             int revealedPlayers = 0;
             for (Player p : players) {
-                if (p.isRevealed()) {
+                if (!p.isRevealed()) {
                     if (revealedPlayers == 0) {
                         revealedPlayers++;
                     } else {
-                        return true;
+                        return false;
                     }
                 }
             }
-            return false;
+            return true;
         }
 
         public void makeRound() {
+            System.out.println(this.isRoundEnded());
             while (!this.isRoundEnded()) {
                 this.makeTurn();
             }
@@ -133,20 +143,14 @@ public class Game {
         }
 
         public void makeTurn() {
-            System.out.println("Yo");
             System.out.println("C'est au tour de " + nextPlayer.getName());
             nextPlayer = nextPlayer.playerTurn();
         }
 
         public void endRound() {
             for (Player p : players) {
+                p.discardAllCards();
                 p.hideIdentity();
-                for (RumourCard hiddenCard : p.getCards()) {
-                    p.discardCard(hiddenCard);
-                }
-                for (RumourCard revealedCard : p.getRevealedCards()) {
-                    p.discardCard(revealedCard);
-                }
             }
         }
     }

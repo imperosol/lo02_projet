@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractRumourCard {
-
-    Player chooseNextPlayer(Player cardOwner, @NotNull List<Player> allPlayers) {
+    protected Player chooseNextPlayer(Player cardOwner, @NotNull List<Player> allPlayers) {
         ArrayList<Player> selectablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
         return cardOwner.selectNextPlayer(selectablePlayers);
     }
