@@ -4,7 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
 
 import java.util.ArrayList;
-
+/////////////////////////////////////////////////////////////////////////////////////:
+//Je mets quoi là ?
 public interface RumourCard {
 
     Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser);

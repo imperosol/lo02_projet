@@ -1,5 +1,8 @@
 package projet.Model.cards;
 
+////////////////////////////////////////////////////////////
+//Je met quoi là ? C'est des utils pour tout ce qui touche à l'identity c'est ça ?
+
 public class IdentityCard extends Card {
     Identity identity;
 

@@ -8,8 +8,8 @@ import projet.Model.cards.RumourCard;
 import java.util.ArrayList;
 
 public abstract class Player {
-    protected final ArrayList<RumourCard> rumourCards;
-    protected final ArrayList<RumourCard> revealedCards;
+    private final ArrayList<RumourCard> rumourCards;
+    private final ArrayList<RumourCard> revealedCards;
     private final IdentityCard identity;
     private final String name;
     private boolean isRevealed;
@@ -24,6 +24,8 @@ public abstract class Player {
         this.rumourCards = new ArrayList<>(nbr_of_cards);
         this.game = game;
     }
+////////////////////////////////////////////////////////////////////////////
+    //je dois mettre un truc ? dans les déclarations de classe comme ça ?
 
     public Game getGame() {
         return this.game;
@@ -69,11 +71,7 @@ public abstract class Player {
         this.isRevealed = false;
     }
 
-    public abstract Player getPlayerToAccuse(Player toExclude);
-
-    public abstract void lookAtIdentity(Player lookedPlayer);
-
-    public Player accuse(Player accusedPlayer) {
+    public Player denounce(Player accusedPlayer) {
         return accusedPlayer.defendAgainstAccusation(this);
     }
 
@@ -97,11 +95,23 @@ public abstract class Player {
         return this.game.getDiscardedCards();
     }
 
+
+    ///////////////////////////////////////////////////////////////////////////////////:
+    //Pas compris ce que ça fait en dessous...
     public void revealCard(RumourCard card) {
         try {
             this.revealedCards.add(this.rumourCards.remove(this.rumourCards.indexOf(card)));
         } catch (Exception e) {
             System.out.println(this.name + " n'a pas cette carte en main");
+        }
+    }
+
+    public void revealCard(int cardIndex) {
+        if (cardIndex < this.rumourCards.size() && cardIndex >= 0) {
+            // if exist, remove the card from the rumourCard list and add it in the revealedCard list
+            this.revealedCards.add(this.rumourCards.remove(cardIndex));
+        } else {
+            System.out.println("La carte n'est pas dans la main du joueur");
         }
     }
 
@@ -127,28 +137,16 @@ public abstract class Player {
         try {
             /* if exist, remove the card from the rumourCard list and add it
              in the discard of the game */
-            this.rumourCards.remove(card);
-            this.game.discardRumourCard(card);
+            RumourCard toRemove = this.rumourCards.remove(this.rumourCards.indexOf(card));
+            this.game.discardRumourCard(toRemove);
         } catch (Exception e) {
             System.out.println("La carte n'est pas dans la main du joueur");
         }
     }
 
-    public String strategyString() {
-        return "";}
-
-    public void discardAllCards() {
-        while (this.rumourCards.size() > 0) {
-            this.discardCard(this.rumourCards.get(0));
-        }
-        while (this.revealedCards.size() > 0) {
-            this.discardCard(this.revealedCards.get(0));
-        }
-    }
-
-    protected ArrayList<RumourCard> getCardsUsableForHunt() {
-        ArrayList<RumourCard> usable = new ArrayList<>(this.rumourCards.size());
-        for (RumourCard card : this.rumourCards) {
+    protected ArrayList<RumourCard> getCardsUsableForHunt() {//Function used to know which are the cards
+        ArrayList<RumourCard> usable = new ArrayList<>(this.rumourCards.size());//with hunt effect usable
+        for (RumourCard card : this.rumourCards) {//in a certain situation
             if (card.isHuntEffectUsable(this)) {
                 usable.add(card);
             }
@@ -156,9 +154,9 @@ public abstract class Player {
         return usable;
     }
 
-    protected ArrayList<RumourCard> getCardsUsableForWitch() {
-        ArrayList<RumourCard> usable = new ArrayList<>(this.rumourCards.size());
-        for (RumourCard card : this.rumourCards) {
+    protected ArrayList<RumourCard> getCardsUsableForWitch() { //Function used to know which are the cards
+        ArrayList<RumourCard> usable = new ArrayList<>(this.rumourCards.size()); //with witch effect usable
+        for (RumourCard card : this.rumourCards) { //in a certain situation
             if (card.isWitchEffectUsable(this)) {
                 usable.add(card);
             }
@@ -166,15 +164,15 @@ public abstract class Player {
         return usable;
     }
 
-    public Player revealIdentityAfterAccusation(Player accuser) {
-        this.revealIdentity();
-        if (this.isWitch()) {
+    protected Player revealIdentityAfterAccusation(Player accuser) {
+        Player nextPlayer;
+        this.revealIdentity(); //When a player is attack and choose to reveal his identity
+        if (this.isWitch()) { //If he's a witch then 1 points for griffo... for the accuser
             accuser.addPoints(1);
-            return accuser;
-        } else {
-            return this;
+            nextPlayer = accuser; //And the next player is the accuser
+        } else { //If he's a villager then he's the next to play
+            nextPlayer = this;
         }
+        return nextPlayer;
     }
-
-    public abstract Player selectNextPlayer(ArrayList<Player> selectablePlayers);
 }

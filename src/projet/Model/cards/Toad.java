@@ -9,18 +9,26 @@ import java.util.ArrayList;
 public final class Toad extends AbstractRumourCard implements RumourCard{
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
-        return cardOwner;
+        return cardOwner; //Card owner is the next player
     }
 
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
-        cardOwner.revealIdentity();
-        if (cardOwner.isWitch()) {
+        cardOwner.revealIdentity(); //reveal card owner identity
+        if (cardOwner.isWitch()) { //if card owner is a witch
             // return the player to the left of the card owner
             int playerIndex = allPlayers.indexOf(cardOwner);
             return allPlayers.get(playerIndex + 1);
-        } else {
-            return this.chooseNextPlayer(cardOwner, allPlayers);
+        } else { //if card owner is a villager
+            Player nextPlayer;
+            ArrayList<Player> revealablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
+            if (cardOwner.isHuman()) { //he chooses next player if he's human
+                nextPlayer = WitchHuntUtils.consoleSelectPlayer(revealablePlayers);
+            } else {//and if it's an ia, it ...
+                // TODO : implémenter comportement IA
+                nextPlayer = revealablePlayers.get(0);
+            }
+            return nextPlayer;
         }
     }
 

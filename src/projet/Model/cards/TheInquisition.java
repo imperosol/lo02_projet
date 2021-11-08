@@ -5,29 +5,31 @@ import projet.Model.player.Player;
 import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-public final class TheInquisition extends AbstractRumourCard implements RumourCard {
+public final class TheInquisition extends AbstractRumourCard implements RumourCard{
+    private int cardWeight = 2;
 
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
-        ArrayList<RumourCard> cards = cardOwner.getCards();
-        RumourCard toDiscard;
-        if (cardOwner.isHuman()) {
-            System.out.println("Défaussez une carte parmi :");
-            toDiscard = WitchHuntUtils.consoleSelectCard(cards);
-        } else {
-            int cardIndex = new Random().nextInt(cards.size());
-            toDiscard = cards.get(cardIndex);
+        ArrayList<RumourCard> cards = cardOwner.getCards(); //Get the cards from the card owner
+        if (cardOwner.isHuman()) { //If he's human
+            System.out.println("Défaussez une carte parmi :"); //then he discards a card among his
+            for (int i = 0; i < cards.size(); i++) {
+                System.out.println(i+1 + " : " + cards.get(i));
+            }
+            int choice = WitchHuntUtils.consoleIntegerChoice(1, cards.size());
+            cardOwner.discardCard(cards.get(choice - 1)); //discard the card
         }
-        cardOwner.discardCard(toDiscard);
-        return cardOwner;
+        return cardOwner; //and finally he's the next player
     }
 
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         Player nextPlayer = this.chooseNextPlayer(cardOwner, allPlayers);
-        cardOwner.lookAtIdentity(nextPlayer);
+        if (cardOwner.isHuman()) { //if human, choose the next player
+            System.out.println("Identité de " + nextPlayer + " : " + nextPlayer.printIdentity());
+        } //And look at his identity
+        // TODO : implémenter le fait de connaitre l'identité du joueur choisi
         return nextPlayer;
     }
 

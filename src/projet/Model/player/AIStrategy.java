@@ -4,8 +4,13 @@ import projet.Model.cards.RumourCard;
 
 import java.util.List;
 
+/////////////////////////////////////////////////////////////////////////::
+//Je sais toujours pas quoi mettre dans les interfaces
+
 public interface AIStrategy {
-    Player getPlayerToAccuse(ComputerPlayer strategyUser, Player toExclude);
+    Player getPlayerToAccuse(ComputerPlayer strategyUser);
+
+    Player applyWitchEffect(Player cardOwner, List<RumourCard> rumourCards);
 
     /**
      * Determines if the computer player using the strategy shall accuse a player or reveal a rumour card
@@ -13,6 +18,4 @@ public interface AIStrategy {
      * @param strategyOwner : the computer player who own the strategy
      */
     int getAttackAction(ComputerPlayer strategyOwner);
-
-    Player selectNextPlayer(ComputerPlayer strategyOwner, List<Player> selectablePlayers);
 }
