@@ -139,6 +139,7 @@ public class Game {
             while (!this.isRoundEnded()) {
                 this.makeTurn();
             }
+            System.out.println("Fin du round");
             this.endRound();
         }
 

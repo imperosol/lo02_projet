@@ -40,9 +40,13 @@ public class AIStrategyAggressive implements AIStrategy {
 
     @Override
     public int getAttackAction(ComputerPlayer strategyOwner) {
+        final int ACCUSE_PLAYER = 1, REVEAL_CARD = 2;
+        // If the player has no more cards, he must accuse
+        if (strategyOwner.rumourCards.size() == 0) {
+            return ACCUSE_PLAYER;
+        }
         /* 1 chance out of 3 to use a rumour card
         * 2 chances out of 3 to accuse a player*/
-        final int ACCUSE_PLAYER = 1, REVEAL_CARD = 2;
         final int choice = new Random().nextInt(3);
         if (choice == 0) {
             return REVEAL_CARD;

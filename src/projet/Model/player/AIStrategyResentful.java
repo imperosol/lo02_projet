@@ -71,14 +71,20 @@ public class AIStrategyResentful implements AIStrategy {
         revealable.remove(toExclude);
         ArrayList<Player> secretlyKnown = strategyUser.getSecretlyKnownPlayer();
         Map<Player, Integer> previousAccusers = strategyUser.getAccusers();
+        System.out.println("Choix de l'accusation rancunière. Joueur exclu : " + toExclude);
+        System.out.println("Connus et rancune");
         Player toChoose = this.getPlayerFromKnownWithResent(secretlyKnown, previousAccusers);
         if (toChoose == null) {
+            System.out.println("Connus sans rancune");
             toChoose = this.getPlayerFromKnownWithoutResent(secretlyKnown);
             if (toChoose == null) {
+                System.out.println("Inconnus avec rancune");
                 toChoose = this.getPlayerFromUnknownWithResent(secretlyKnown, previousAccusers);
                 if (toChoose == null) {
+                    System.out.println("Inconnus sans rancune");
                     toChoose = this.getPlayerFromUnknownWithoutResent(revealable, secretlyKnown);
                     if (toChoose == null) {
+                        System.out.println("Hasard");
                         toChoose = revealable.get(new Random().nextInt(revealable.size()));
                     }
                 }
@@ -89,9 +95,13 @@ public class AIStrategyResentful implements AIStrategy {
 
     @Override
     public int getAttackAction(ComputerPlayer strategyOwner) {
+        final int ACCUSE_PLAYER = 1, REVEAL_CARD = 2;
+        // If the player has no more cards, he must accuse
+        if (strategyOwner.rumourCards.size() == 0) {
+            return ACCUSE_PLAYER;
+        }
         /* 1 chance out of 2 to use a rumour card
          * 1 chance out of 2 to accuse a player*/
-        final int ACCUSE_PLAYER = 1, REVEAL_CARD = 2;
         Random random = new Random();
         int choice = random.nextInt(2);
         if (choice == 0) {

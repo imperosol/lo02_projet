@@ -10,6 +10,10 @@ import java.util.List;
 public abstract class AbstractRumourCard {
     protected Player chooseNextPlayer(Player cardOwner, @NotNull List<Player> allPlayers) {
         ArrayList<Player> selectablePlayers = WitchHuntUtils.getSelectablePlayers(cardOwner, allPlayers);
-        return cardOwner.selectNextPlayer(selectablePlayers);
+        System.out.println(selectablePlayers);
+        Player p = cardOwner.selectNextPlayer(selectablePlayers);
+        System.out.println(p);
+        return p;
+//        return cardOwner.selectNextPlayer(selectablePlayers);
     }
 }
