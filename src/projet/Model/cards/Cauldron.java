@@ -13,7 +13,14 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
         // the accuser discards a random card
         Random rand = new Random();
         ArrayList<RumourCard> accuserCards = accuser.getCards();
-        accuser.discardCard(accuserCards.get(rand.nextInt(accuserCards.size())));
+        final int nbr_cards = accuserCards.size();
+        if (nbr_cards > 0) {
+            RumourCard toDiscard = accuserCards.get(rand.nextInt(nbr_cards));
+            System.out.println(accuser.printIdentity() + " discards " + toDiscard);
+            accuser.discardCard(toDiscard);
+        } else {
+            System.out.println(accuser.printIdentity() + " has no card, he doesn't discard anything.");
+        }
         return cardOwner;
     }
 
@@ -23,7 +30,7 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
         if (cardOwner.isWitch()) {
             // return the player to the left of the card owner
             int playerIndex = allPlayers.indexOf(cardOwner);
-            return allPlayers.get(playerIndex + 1);
+            return allPlayers.get((playerIndex + 1) % allPlayers.size());
         } else {
             return this.chooseNextPlayer(cardOwner, allPlayers);
         }

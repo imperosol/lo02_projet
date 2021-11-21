@@ -17,17 +17,21 @@ public final class PetNewt extends AbstractRumourCard implements RumourCard {
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         ArrayList<RumourCard> revealedCards = this.getAllRevealedCards(cardOwner, allPlayers);
         int choice;
-        if (cardOwner.isHuman()) {
-            System.out.println("Récupérez une carte parmi les suivantes :");
-            choice = WitchHuntUtils.consoleSelectCardIndex(revealedCards);
+        if (revealedCards.size() == 0) {
+            System.out.println("Aucune carte révélée, vous ne pouvez rien récupérer.");
         } else {
-            choice = new Random().nextInt(revealedCards.size());
-        }
-        RumourCard card = revealedCards.get(choice);
-        Player opponent = this.getCardOwner(card, allPlayers);
-        if (opponent != null) {
-            opponent.getRevealedCards().remove(card);
-            cardOwner.giveCard(card);
+            if (cardOwner.isHuman()) {
+                System.out.println("Récupérez une carte parmi les suivantes :");
+                choice = WitchHuntUtils.consoleSelectCardIndex(revealedCards);
+            } else {
+                choice = new Random().nextInt(revealedCards.size());
+            }
+            RumourCard card = revealedCards.get(choice);
+            Player opponent = this.getCardOwner(card, allPlayers);
+            if (opponent != null) {
+                opponent.getRevealedCards().remove(card);
+                cardOwner.giveCard(card);
+            }
         }
         return this.chooseNextPlayer(cardOwner, allPlayers);
     }

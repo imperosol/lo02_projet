@@ -27,7 +27,7 @@ public class AIStrategyResentful implements AIStrategy {
         int maxAccusation = -1;
         Player toChoose = null;
         for (Player p : secretlyKnown) {
-            if (p.isWitch() && previousAccusers.containsKey(p)) {
+            if (p.isWitch() && previousAccusers.containsKey(p) && !p.isRevealed()) {
                 if (previousAccusers.get(p) > maxAccusation) {
                     maxAccusation = previousAccusers.get(p);
                     toChoose = p;
@@ -37,11 +37,12 @@ public class AIStrategyResentful implements AIStrategy {
         return toChoose;
     }
 
+    // get a player from unknown with resent
     private Player getPlayerFromUnknownWithResent(ArrayList<Player> secretlyKnown, Map<Player, Integer> previousAccusers) {
         int maxAccusation = -1;
         Player toChoose = null;
         for (Player p : previousAccusers.keySet()) {
-            if (previousAccusers.get(p) > maxAccusation && !secretlyKnown.contains(p)) {
+            if (previousAccusers.get(p) > maxAccusation && !secretlyKnown.contains(p) && !p.isRevealed()) {
                 maxAccusation = previousAccusers.get(p);
                 toChoose = p;
             }
@@ -97,7 +98,7 @@ public class AIStrategyResentful implements AIStrategy {
     public int getAttackAction(ComputerPlayer strategyOwner) {
         final int ACCUSE_PLAYER = 1, REVEAL_CARD = 2;
         // If the player has no more cards, he must accuse
-        if (strategyOwner.rumourCards.size() == 0) {
+        if (strategyOwner.getCardsUsableForHunt().size() == 0) {
             return ACCUSE_PLAYER;
         }
         /* 1 chance out of 2 to use a rumour card
@@ -115,6 +116,10 @@ public class AIStrategyResentful implements AIStrategy {
     public Player selectNextPlayer(ComputerPlayer strategyOwner, List<Player> selectablePlayers) {
         // Select the player which has the less accused the current player
         Map<Player, Integer> previousAccusers = strategyOwner.getAccusers();
+        ArrayList<Player> secretlyKnown = strategyOwner.getSecretlyKnownPlayer();
+        if (previousAccusers.isEmpty() && secretlyKnown.isEmpty()) {
+            return selectablePlayers.get(new Random().nextInt(selectablePlayers.size()));
+        }
         int min = 100;
         Player chosenPlayer = null;
         for (Player p : selectablePlayers) {
@@ -125,7 +130,11 @@ public class AIStrategyResentful implements AIStrategy {
                 }
             }
         }
-        return chosenPlayer;
+        if (chosenPlayer == null) {
+            return selectablePlayers.get(new Random().nextInt(selectablePlayers.size()));
+        } else {
+            return chosenPlayer;
+        }
     }
 
 }

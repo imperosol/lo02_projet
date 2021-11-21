@@ -139,13 +139,13 @@ public class ComputerPlayer extends Player {
     public Player playerTurn() {
         this.updateKnownPlayerList();
         int choice = this.strategy.getAttackAction(this);
-        if (choice == 1) { // accuse player
+        ArrayList<RumourCard> usableCards = this.getCardsUsableForHunt();
+        if (choice == 1 || usableCards.size() == 0) { // accuse player
             Player toAccuse = this.getPlayerToAccuse(null);
             System.out.println(this.getName() + " accuse " + toAccuse.getName());
             return this.accuse(toAccuse);
         } else { // reveal card
             // TODO : entièrement aléatoire, à améliorer
-            ArrayList<RumourCard> usableCards = this.getCardsUsableForHunt();
             int cardIndex = new Random().nextInt(usableCards.size());
             RumourCard card = usableCards.get(cardIndex);
             this.revealCard(card);

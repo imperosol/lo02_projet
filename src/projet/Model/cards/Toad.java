@@ -18,7 +18,7 @@ public final class Toad extends AbstractRumourCard implements RumourCard{
         if (cardOwner.isWitch()) {
             // return the player to the left of the card owner
             int playerIndex = allPlayers.indexOf(cardOwner);
-            return allPlayers.get(playerIndex + 1);
+            return allPlayers.get((playerIndex + 1) % allPlayers.size());
         } else {
             return this.chooseNextPlayer(cardOwner, allPlayers);
         }

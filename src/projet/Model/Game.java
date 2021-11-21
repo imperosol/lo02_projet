@@ -5,6 +5,7 @@ import projet.Model.cards.*;
 import projet.Model.player.ComputerPlayer;
 import projet.Model.player.HumanPlayer;
 import projet.Model.player.Player;
+import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -98,10 +99,22 @@ public class Game {
             Round currentRound = new Round();
             currentRound.makeRound();
         }
+        WitchHuntUtils.displayNotlikethis();
+        System.out.println("Le vainqueur est : " + this.getPlayerWithMaxPoints().printIdentity());
     }
 
     public ArrayList<RumourCard> getDiscardedCards() {
         return this.rumourCards;
+    }
+
+    public Player getPlayerWithMaxPoints() {
+        Player maxPlayer = this.players.get(0);
+        for (Player p : this.players) {
+            if (p.getPoints() > maxPlayer.getPoints()) {
+                maxPlayer = p;
+            }
+        }
+        return maxPlayer;
     }
 
     public boolean isGameEnded() {
@@ -114,10 +127,9 @@ public class Game {
     }
 
     private class Round {
-        private final ArrayList<RumourCard> discard;
 
         public Round() {
-            this.discard = rumourCards;
+
         }
 
         public boolean isRoundEnded() {

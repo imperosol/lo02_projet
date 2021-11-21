@@ -39,7 +39,7 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
 
     @Override
     public String toString() {
-        return "TheInquisition";
+        return "Nobody expects";
     }
 
     //    Nobody expects the spanish inquisition

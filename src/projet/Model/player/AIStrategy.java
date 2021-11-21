@@ -14,5 +14,11 @@ public interface AIStrategy {
      */
     int getAttackAction(ComputerPlayer strategyOwner);
 
+    /**
+     *
+     * @param strategyOwner the player who uses this strategy
+     * @param selectablePlayers
+     * @return
+     */
     Player selectNextPlayer(ComputerPlayer strategyOwner, List<Player> selectablePlayers);
 }

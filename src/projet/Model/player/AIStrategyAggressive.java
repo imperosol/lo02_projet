@@ -10,8 +10,8 @@ public class AIStrategyAggressive implements AIStrategy {
     @Override
     public Player getPlayerToAccuse(ComputerPlayer strategyUser, Player toExclude) {
         /* the aggressive AI always accuse the player who has the less cards in hand
-        * and therefore has the less ability to defend himself.
-        * The players whose identity is known are prioritized over those who are not known */
+         * and therefore has the less ability to defend himself.
+         * The players whose identity is known are prioritized over those who are not known */
         int minCard = 10;
         Player toChoose = null;
         ArrayList<Player> secretlyKnown = strategyUser.getSecretlyKnownPlayer();
@@ -35,7 +35,11 @@ public class AIStrategyAggressive implements AIStrategy {
                 toChoose = p;
             }
         }
-        return toChoose;
+        if (toChoose != null) {
+            return toChoose;
+        } else {
+            return revealable.get(new Random().nextInt(revealable.size()));
+        }
     }
 
     @Override
@@ -46,7 +50,7 @@ public class AIStrategyAggressive implements AIStrategy {
             return ACCUSE_PLAYER;
         }
         /* 1 chance out of 3 to use a rumour card
-        * 2 chances out of 3 to accuse a player*/
+         * 2 chances out of 3 to accuse a player*/
         final int choice = new Random().nextInt(3);
         if (choice == 0) {
             return REVEAL_CARD;

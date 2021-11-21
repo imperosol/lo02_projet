@@ -139,10 +139,10 @@ public abstract class Player {
 
     public void discardAllCards() {
         while (this.rumourCards.size() > 0) {
-            this.discardCard(this.rumourCards.get(0));
+            this.discardCard(this.rumourCards.remove(0));
         }
         while (this.revealedCards.size() > 0) {
-            this.discardCard(this.revealedCards.get(0));
+            this.discardCard(this.revealedCards.remove(0));
         }
     }
 
@@ -177,4 +177,9 @@ public abstract class Player {
     }
 
     public abstract Player selectNextPlayer(ArrayList<Player> selectablePlayers);
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
