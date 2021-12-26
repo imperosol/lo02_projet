@@ -1,50 +1,20 @@
 package projet.Model.utils;
 
 import org.jetbrains.annotations.NotNull;
-import projet.Model.cards.RumourCard;
 import projet.Model.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class WitchHuntUtils {
-    public static int consoleIntegerChoice(final int min, final int max) {
-        Scanner scan = new Scanner(System.in);
-        int indexChoice = scan.nextInt();
-        while (indexChoice < min || indexChoice > max) {
-            System.out.print("Choix invalide, recommencez : ");
-            indexChoice = scan.nextInt();
-        }
-        return indexChoice;
-    }
 
-    public static Player consoleSelectPlayer(@NotNull List<Player> playerList) {
-        System.out.println("Choisissez un joueur :");
-        for (int i = 0; i < playerList.size(); ++i) {
-            System.out.println(i+1 + " : " + playerList.get(i).getName());
-        }
-        int indexChoice = WitchHuntUtils.consoleIntegerChoice(1, playerList.size());
-        return playerList.get(indexChoice - 1);
-    }
-
-    public static int consoleSelectCardIndex(List<RumourCard> list) {
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(i+1 + " : " + list.get(i));
-        }
-        System.out.print("\t-> ");
-        return WitchHuntUtils.consoleIntegerChoice(1, list.size()) - 1;
-    }
-
-    public static RumourCard consoleSelectCard(List<RumourCard> list) {
-        int choice;
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(i+1 + " : " + list.get(i));
-        }
-        choice = WitchHuntUtils.consoleIntegerChoice(1, list.size()) - 1;
-        return list.get(choice);
-    }
-
+    /**
+     * Method to get an ArrayList of all the players that are selectable
+     * @param cardOwner address to the Player instance which owns the cards
+     * @param allPlayers List of all players taking part in the game, whether there identity has been revealed or not
+     * @return an ArrayList of all players who are not the card owner, who are not witches and
+     * whose identity has not been revealed yet
+     */
     @NotNull
     public static ArrayList<Player> getSelectablePlayers(Player cardOwner, @NotNull List<Player> allPlayers) {
         ArrayList<Player> selectablePlayers = new ArrayList<>();
@@ -57,7 +27,7 @@ public class WitchHuntUtils {
     }
 
     /**
-     *
+     * Method to get an ArrayList of all the players that are revealable
      * @param cardOwner address to the Player instance which owns the cards
      * @param allPlayers List of all players taking part in the game, whether there identity has been revealed or not
      * @return an ArrayList of all players who are not the card owner and whose identity has not been revealed yet
@@ -74,6 +44,9 @@ public class WitchHuntUtils {
     }
 
 
+    /**
+     * Display an ascii art picture when the game is over.
+     */
     public static void displayNotlikethis() {
         System.out.println("""
                                .**+**#*==*###*++++++++++++++++++++++++++++++++**#+.                      \s

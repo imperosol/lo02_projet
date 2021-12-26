@@ -2,7 +2,7 @@ package projet.Model.cards;
 
 import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
-import projet.Model.utils.WitchHuntUtils;
+import projet.View.CLIView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,7 +20,7 @@ public final class BlackCat extends AbstractRumourCard implements RumourCard {
         int choice;
         if (cardOwner.isHuman()) {
             System.out.println("Récupérez une carte parmi les suivantes :");
-            choice = WitchHuntUtils.consoleSelectCardIndex(discard);
+            choice = CLIView.consoleSelectCardIndex(discard);
         } else {
             choice = new Random().nextInt(discard.size());
         }

@@ -74,6 +74,7 @@ public abstract class Player {
     public abstract void lookAtIdentity(Player lookedPlayer);
 
     public Player accuse(Player accusedPlayer) {
+        this.game.getController().addLog(this + " accuse " + accusedPlayer);
         return accusedPlayer.defendAgainstAccusation(this);
     }
 
@@ -135,7 +136,8 @@ public abstract class Player {
     }
 
     public String strategyString() {
-        return "";}
+        return "";
+    }
 
     public void discardAllCards() {
         while (this.rumourCards.size() > 0) {

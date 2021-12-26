@@ -2,7 +2,7 @@ package projet.Model.cards;
 
 import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
-import projet.Model.utils.WitchHuntUtils;
+import projet.View.CLIView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -42,7 +42,7 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
                         1 : Vous défausser d'une carte et prendre le tour
                         2 : Révéler votre identité (+1 point à l'accusateur si vous êtes sorcière, -1 sinon)
                         \t->\s""");
-                choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
+                choice = CLIView.consoleIntegerChoice(1, 2);
             } else if (selectedPlayer.getCards().size() == 0 && !selectedPlayer.isRevealed()) {
                 System.out.println("Vous devez révéler votre identité");
                 choice = 2;
@@ -70,7 +70,7 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
             ArrayList<RumourCard> playerCards = selectedPlayer.getCards();
             if (selectedPlayer.isHuman()) {
                 System.out.println("Choisissez une carte à défausser : \n");
-                cardIndex = WitchHuntUtils.consoleSelectCardIndex(playerCards);
+                cardIndex = CLIView.consoleSelectCardIndex(playerCards);
             } else {
                 cardIndex = random.nextInt(playerCards.size());
             }

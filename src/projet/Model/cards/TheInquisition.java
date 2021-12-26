@@ -2,7 +2,7 @@ package projet.Model.cards;
 
 import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
-import projet.Model.utils.WitchHuntUtils;
+import projet.View.CLIView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,7 +15,7 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
         RumourCard toDiscard;
         if (cardOwner.isHuman()) {
             System.out.println("Défaussez une carte parmi :");
-            toDiscard = WitchHuntUtils.consoleSelectCard(cards);
+            toDiscard = CLIView.consoleSelectCard(cards);
         } else {
             int cardIndex = new Random().nextInt(cards.size());
             toDiscard = cards.get(cardIndex);
@@ -39,7 +39,7 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
 
     @Override
     public String toString() {
-        return "Nobody expects";
+        return "TheInquisition";
     }
 
     //    Nobody expects the spanish inquisition

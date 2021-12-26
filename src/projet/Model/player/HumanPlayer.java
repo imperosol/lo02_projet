@@ -4,6 +4,7 @@ import projet.Model.Game;
 import projet.Model.cards.Identity;
 import projet.Model.cards.RumourCard;
 import projet.Model.utils.WitchHuntUtils;
+import projet.View.CLIView;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class HumanPlayer extends Player {
         System.out.println(this.getName() + ", voulez-vous être :\n" +
                 "1 : Villageois\n" +
                 "2 : Sorcière");
-        int choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
+        int choice = CLIView.consoleIntegerChoice(1, 2);
         if (choice == 1) {
             this.setIdentity(Identity.VILLAGER);
         } else {
@@ -32,7 +33,7 @@ public class HumanPlayer extends Player {
 
     @Override
     public Player selectNextPlayer(ArrayList<Player> selectablePlayers) {
-        return WitchHuntUtils.consoleSelectPlayer(selectablePlayers);
+        return CLIView.consoleSelectPlayer(selectablePlayers);
     }
 
     @Override
@@ -48,12 +49,12 @@ public class HumanPlayer extends Player {
                 1 : Révéler votre identité
                 2 : Révéler une carte et appliquer son effet Witch
                 \t->\040""");
-        int choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
+        int choice = CLIView.consoleIntegerChoice(1, 2);
         Player nextPlayer;
         if (choice == 1) {
             nextPlayer = this.revealIdentityAfterAccusation(accuser);
         } else {
-            int cardIndex = WitchHuntUtils.consoleSelectCardIndex(usableCards);
+            int cardIndex = CLIView.consoleSelectCardIndex(usableCards);
             RumourCard card = usableCards.get(cardIndex);
             nextPlayer = card.witchEffect(this, this.game.getPlayers(), accuser);
             this.revealCard(card);
@@ -67,7 +68,7 @@ public class HumanPlayer extends Player {
                 this.game.getPlayers()
         );
         revealable.remove(toExclude);
-        return WitchHuntUtils.consoleSelectPlayer(revealable);
+        return CLIView.consoleSelectPlayer(revealable);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class HumanPlayer extends Player {
                 1 : dénoncer un joueur
                 2 : révéler une carte et appliquer son effet Hunt
                 \t->\040""");
-        int choice = WitchHuntUtils.consoleIntegerChoice(1, 2);
+        int choice = CLIView.consoleIntegerChoice(1, 2);
         Player nextPlayer;
         if (choice == 1) {  // accuse player
             Player toDenounce = this.getPlayerToAccuse(null);
@@ -95,7 +96,7 @@ public class HumanPlayer extends Player {
         } else {  // use rumour card
             ArrayList <RumourCard> usable = this.getCardsUsableForHunt();
             System.out.println("Choisissez une carte pour appliquer son effet Hunt : ");
-            RumourCard card = WitchHuntUtils.consoleSelectCard(usable);
+            RumourCard card = CLIView.consoleSelectCard(usable);
             this.revealCard(card);
             nextPlayer = card.huntEffect(this, this.game.getPlayers());
         }

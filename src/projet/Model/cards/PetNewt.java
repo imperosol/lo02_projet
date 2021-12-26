@@ -2,7 +2,7 @@ package projet.Model.cards;
 
 import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
-import projet.Model.utils.WitchHuntUtils;
+import projet.View.CLIView;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -22,7 +22,7 @@ public final class PetNewt extends AbstractRumourCard implements RumourCard {
         } else {
             if (cardOwner.isHuman()) {
                 System.out.println("Récupérez une carte parmi les suivantes :");
-                choice = WitchHuntUtils.consoleSelectCardIndex(revealedCards);
+                choice = CLIView.consoleSelectCardIndex(revealedCards);
             } else {
                 choice = new Random().nextInt(revealedCards.size());
             }

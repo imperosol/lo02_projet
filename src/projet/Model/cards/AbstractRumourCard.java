@@ -14,6 +14,5 @@ public abstract class AbstractRumourCard {
         Player p = cardOwner.selectNextPlayer(selectablePlayers);
         System.out.println(p);
         return p;
-//        return cardOwner.selectNextPlayer(selectablePlayers);
     }
 }

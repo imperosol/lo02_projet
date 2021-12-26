@@ -1,6 +1,7 @@
 package projet.Model;
 
 import org.jetbrains.annotations.NotNull;
+import projet.Controller.MainController;
 import projet.Model.cards.*;
 import projet.Model.player.ComputerPlayer;
 import projet.Model.player.HumanPlayer;
@@ -16,7 +17,9 @@ public class Game {
     private final ArrayList<Player> players;
     private final ArrayList<RumourCard> rumourCards;
     private Player nextPlayer;
+    private Player currentPlayer;
     private final int cardPerPlayer;
+    private MainController controller = null;
 
     public Game(int nbr_humans, int nbr_ia) {
         this.cardPerPlayer = getCardPerPlayer(nbr_humans + nbr_ia);
@@ -24,8 +27,13 @@ public class Game {
         this.players = createPlayers(nbr_humans, nbr_ia, this.cardPerPlayer);
         Random random = new Random();
         this.nextPlayer = this.players.get(random.nextInt(this.players.size()));
+        this.currentPlayer = nextPlayer;
+        this.distributeRumourCards();
     }
 
+    public void setController(MainController controller) {
+        this.controller = controller;
+    }
 
     private int getCardPerPlayer(int nbr_players) {
         int card_per_player;
@@ -35,6 +43,14 @@ public class Game {
             card_per_player = 7 - nbr_players;
         }
         return card_per_player;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player player) {
+        this.currentPlayer = player;
     }
 
     private @NotNull ArrayList<Player> createPlayers(int nbr_humans, int nbr_ia, int card_per_player) {
@@ -90,17 +106,13 @@ public class Game {
                     System.out.println(p.getGame() + " : stratégie " + p.strategyString());
                 }
             }
-//            System.out.println("Nouveau round");
-//            for (Player p : this.players) {
-//                System.out.println(p.getName() + " (nombre de points : " + p.getPoints() + ")");
-//            }
             this.distributeRumourCards();
             this.assignRoles();
             Round currentRound = new Round();
             currentRound.makeRound();
         }
         WitchHuntUtils.displayNotlikethis();
-        System.out.println("Le vainqueur est : " + this.getPlayerWithMaxPoints().printIdentity());
+        System.out.println("Le vainqueur est : " + this.getPlayerWithMaxPoints());
     }
 
     public ArrayList<RumourCard> getDiscardedCards() {
@@ -126,12 +138,11 @@ public class Game {
         return false;
     }
 
+    public MainController getController() {
+        return controller;
+    }
+
     private class Round {
-
-        public Round() {
-
-        }
-
         public boolean isRoundEnded() {
             int revealedPlayers = 0;
             for (Player p : players) {
@@ -157,6 +168,7 @@ public class Game {
 
         public void makeTurn() {
             System.out.println("C'est au tour de " + nextPlayer.getName());
+//            currentPlayer = nextPlayer;
             nextPlayer = nextPlayer.playerTurn();
         }
 
