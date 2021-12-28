@@ -19,6 +19,11 @@ public interface RumourCard {
         return true;
     }
 
+    boolean witchUserTakesTurn();
+
+    boolean witchNeedsInteraction();
+
+
 //    Yami no chikara o himeshi kagi yo,
 //    Shin no sugata o ware no mae ni shimese.
 //    Keiyaku no moto Sakura ga meijiru.

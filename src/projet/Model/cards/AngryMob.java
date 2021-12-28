@@ -7,7 +7,6 @@ import projet.Model.utils.WitchHuntUtils;
 import java.util.ArrayList;
 
 public final class AngryMob extends AbstractRumourCard implements RumourCard {
-
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         return cardOwner;
@@ -41,8 +40,8 @@ public final class AngryMob extends AbstractRumourCard implements RumourCard {
     @Override
     public boolean isHuntEffectUsable(Player cardOwner) {
         /* The effect is not usable if there is only one other player
-        * and this player has revealed Broomstick.
-        * Moreover, the card owner must have previously revealed one of his rumour cards */
+         * and this player has revealed Broomstick.
+         * Moreover, the card owner must have previously revealed one of his rumour cards */
         ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(cardOwner, cardOwner.getGame().getPlayers());
         for (Player p : revealable) {
             for (RumourCard card : p.getRevealedCards()) {
@@ -51,6 +50,16 @@ public final class AngryMob extends AbstractRumourCard implements RumourCard {
                 }
             }
         }
+        return false;
+    }
+
+    public boolean witchUserTakesTurn() {
+        return true;
+    }
+
+
+    @Override
+    public boolean witchNeedsInteraction() {
         return false;
     }
 

@@ -17,6 +17,6 @@ public class IdentityCard extends Card {
 
     @Override
     public String toString() {
-        return "" + identity;
+        return identity.toString();
     }
 }

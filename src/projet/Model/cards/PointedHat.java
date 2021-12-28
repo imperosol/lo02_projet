@@ -47,6 +47,15 @@ public final class PointedHat extends AbstractRumourCard implements RumourCard{
         return cardOwner.getRevealedCards().size() > 0;
     }
 
+    public boolean witchUserTakesTurn() {
+        return true;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return true;
+    }
+
 
     @Override
     public String toString() {

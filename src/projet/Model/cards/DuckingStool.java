@@ -89,6 +89,16 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
     }
 
     @Override
+    public boolean witchUserTakesTurn() {
+        return false;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "DuckingStool";
     }

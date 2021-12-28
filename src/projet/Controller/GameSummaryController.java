@@ -5,7 +5,7 @@ import projet.Model.player.Player;
 
 import java.util.ArrayList;
 
-public class GameSummaryController {
+public final class GameSummaryController {
     private final ArrayList<Player> gameSummary;
 
     public GameSummaryController(Game game) {
@@ -17,15 +17,16 @@ public class GameSummaryController {
         if (rowIndex == 0) {
             return new String[]{"Joueurs", "identité", "points"}[columnIndex];
         }
+        Player p = this.gameSummary.get(rowIndex - 1);
         return switch (columnIndex) {
-            case 0 -> this.gameSummary.get(rowIndex - 1).getName();
-            case 1 -> this.gameSummary.get(rowIndex - 1).isRevealed() ? this.gameSummary.get(rowIndex - 1).printIdentity() : "?";
-            case 2 -> this.gameSummary.get(rowIndex - 1).getPoints();
+            case 0 -> p.getName();
+            case 1 -> p.isRevealed() || p.isCurrentPlayer() ? p.printIdentity() : "?";
+            case 2 -> p.getPoints();
             default -> throw new IllegalStateException("Unexpected value: " + columnIndex);
         };
     }
 
     public int getLines() {
-        return this.gameSummary.size();
+        return this.gameSummary.size() + 1;
     }
 }

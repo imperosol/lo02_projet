@@ -7,8 +7,11 @@ import projet.Model.utils.WitchHuntUtils;
 import projet.View.CLIView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class HumanPlayer extends Player {
+public final class HumanPlayer extends Player {
+    private List<Player> accusablePlayers;
+
     public HumanPlayer(int nbr_of_cards, String name, Game game) {
         super(nbr_of_cards, name, game);
     }
@@ -38,38 +41,48 @@ public class HumanPlayer extends Player {
 
     @Override
     public Player defendAgainstAccusation(Player accuser) {
+        this.game.setCurrentPlayer(this);
+        this.game.getController().changePlayer();
+        this.setAccuser(accuser);
         System.out.println(this.getName() + ", vous venez d'être accusé.");
         ArrayList<RumourCard> usableCards = this.getCardsUsableForWitch();
         System.out.println("Vous pouvez utiliser les cartes suivantes : ");
         for (RumourCard card : usableCards) {
             System.out.println("\t- " + card);
         }
-        System.out.print("""
-                Voulez vous :\s
-                1 : Révéler votre identité
-                2 : Révéler une carte et appliquer son effet Witch
-                \t->\040""");
-        int choice = CLIView.consoleIntegerChoice(1, 2);
-        Player nextPlayer;
-        if (choice == 1) {
-            nextPlayer = this.revealIdentityAfterAccusation(accuser);
-        } else {
-            int cardIndex = CLIView.consoleSelectCardIndex(usableCards);
-            RumourCard card = usableCards.get(cardIndex);
-            nextPlayer = card.witchEffect(this, this.game.getPlayers(), accuser);
-            this.revealCard(card);
-        }
-        return nextPlayer;
+//        System.out.print("""
+//                Voulez vous :\s
+//                1 : Révéler votre identité
+//                2 : Révéler une carte et appliquer son effet Witch
+//                \t->\040""");
+//        int choice = CLIView.consoleIntegerChoice(1, 2);
+//        Player nextPlayer;
+//        if (choice == 1) {
+//            nextPlayer = this.revealIdentityAfterAccusation(accuser);
+//        } else {
+//            int cardIndex = CLIView.consoleSelectCardIndex(usableCards);
+//            RumourCard card = usableCards.get(cardIndex);
+//            nextPlayer = card.witchEffect(this, this.game.getPlayers(), accuser);
+//            this.revealCard(card);
+//        }
+//        return nextPlayer;
+        return null;
     }
 
     public Player getPlayerToAccuse(Player toExclude) {
-        ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(
+        this.accusablePlayers = WitchHuntUtils.getRevealablePlayers(
                 this,
                 this.game.getPlayers()
         );
-        revealable.remove(toExclude);
-        return CLIView.consoleSelectPlayer(revealable);
+        this.accusablePlayers.remove(toExclude);
+        return null;
+//        return CLIView.consoleSelectPlayer(revealable);
     }
+
+    public boolean canAccuse(Player toAccuse) {
+        return this.accusablePlayers.contains(toAccuse);
+    }
+
 
     @Override
     public void lookAtIdentity(Player lookedPlayer) {
@@ -88,18 +101,21 @@ public class HumanPlayer extends Player {
                 1 : dénoncer un joueur
                 2 : révéler une carte et appliquer son effet Hunt
                 \t->\040""");
-        int choice = CLIView.consoleIntegerChoice(1, 2);
-        Player nextPlayer;
-        if (choice == 1) {  // accuse player
-            Player toDenounce = this.getPlayerToAccuse(null);
-            nextPlayer = this.accuse(toDenounce);
-        } else {  // use rumour card
-            ArrayList <RumourCard> usable = this.getCardsUsableForHunt();
-            System.out.println("Choisissez une carte pour appliquer son effet Hunt : ");
-            RumourCard card = CLIView.consoleSelectCard(usable);
-            this.revealCard(card);
-            nextPlayer = card.huntEffect(this, this.game.getPlayers());
-        }
-        return nextPlayer;
+//        this.attackAction = AttackAction.UNDEFINED;
+        // TODO reintegrate this part when gui is finished
+//        int choice = CLIView.consoleIntegerChoice(1, 2);
+//        Player nextPlayer;
+//        if (attackAction == AttackAction.ACCUSE_PLAYER) {
+//            Player toDenounce = this.getPlayerToAccuse(null);
+//            nextPlayer = this.accuse(toDenounce);
+//        } else {
+//            ArrayList<RumourCard> usable = this.getCardsUsableForHunt();
+//            System.out.println("Choisissez une carte pour appliquer son effet Hunt : ");
+//            RumourCard card = CLIView.consoleSelectCard(usable);
+//            this.revealCard(card);
+//            nextPlayer = card.huntEffect(this, this.game.getPlayers());
+//        }
+//        return nextPlayer;
+        return null;
     }
 }

@@ -1,7 +1,7 @@
 package projet.Controller;
 
 import projet.Model.Game;
-import projet.Model.cards.RumourCard;
+import projet.Model.cards.*;
 import projet.Model.player.Player;
 import projet.View.GUICard;
 import projet.View.GUIView;
@@ -14,13 +14,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
-public class MainController {
+public final class MainController {
     public static final int RUMOUR_CARD = 1;
     public static final int REVEALED_CARD = 2;
+    public static final int DISCARD = 3;
 
     private GamePhase currentPhase = GamePhase.ATTACK;
     private GUICard focusedCard = null;
+    private RumourCard usingHunt = null;
+    private RumourCard usingWitch = null;
     private int focusedPlayer = -1;
     private final Game game;
     private final GUIView guiView;
@@ -76,7 +80,7 @@ public class MainController {
             for (RumourCard card : revealedCards) {
                 revealedCardsImages.add(this.cardImages.get(card.toString()));
             }
-            this.guiView.setRumourCards(index, revealedCardsImages);
+            this.guiView.setRevealedCards(index, revealedCardsImages);
             index++;
         }
     }
@@ -95,19 +99,30 @@ public class MainController {
     }
 
     public void focusPlayer(int player) {
-        int currentPlayerIndex = this.game.getPlayers().indexOf(this.game.getCurrentPlayer());
+        int currentPlayerIndex = this.game.getCurrentPlayerIndex();
         if (this.focusedPlayer != -1) {
             this.guiView.unHighlightPlayer(this.focusedPlayer);
         }
         this.focusedPlayer = player;
         this.guiView.highlightPlayer(player);
         if (this.currentPhase == GamePhase.ATTACK) {
-            this.guiView.setAccusePlayerButton(this.focusedPlayer != -1 && currentPlayerIndex != this.focusedPlayer);
+            this.guiView.setAccusePlayerButton(player != -1
+                    && currentPlayerIndex != player
+                    && !this.game.getPlayers().get(player).isRevealed()
+            );
         }
     }
 
     public void useHunt() {
-
+        Player current = this.game.getCurrentPlayer();
+        this.usingHunt = current.getCards().get(this.focusedCard.index);
+        this.addLog(current + " utilise le Hunt de la carte " + this.usingHunt);
+        current.revealCard(this.usingHunt);
+        this.guiView.setHuntValidationGUI();
+        this.setCardsGUI();
+        if (this.usingHunt instanceof Toad) {
+            this.guiView.setWitchValidation(true);
+        }
     }
 
     public void accusePlayer() {
@@ -120,19 +135,98 @@ public class MainController {
     }
 
     public void useWitch() {
-
+        this.guiView.setWitchValidationGUI();
+        Player current = this.game.getCurrentPlayer();
+        this.usingWitch = current.getCards().get(this.focusedCard.index);
+        this.addLog(current + " utilise le Witch de la carte " + this.usingWitch);
+        current.revealCard(this.usingWitch);
+        this.setCardsGUI();
     }
 
     public void revealIdentity() {
+        Player current = this.game.getCurrentPlayer();
+        Player next = current.revealIdentityAfterAccusation(current.getAccuser());
+        game.setCurrentPlayer(next);
+        this.newTurn();
+    }
 
+    public void validateWitch() {
+        Player current = this.game.getCurrentPlayer();
+        Player accuser = current.getAccuser();
+        Random random = new Random();
+        if (this.usingWitch instanceof HookedNose) {
+            current.giveCard(accuser.getCards().remove(random.nextInt(accuser.getCards().size())));
+        } else if (this.usingWitch instanceof Cauldron) {
+            accuser.discardCard(accuser.getCards().get(random.nextInt(accuser.getCards().size())));
+        }
+
+    }
+
+    public void validateHunt() {
+
+    }
+
+    public void newTurn() {
+        this.addLog("C'est au tour de " + this.game.getCurrentPlayer() + "\n");
+        this.currentPhase = GamePhase.ATTACK;
+        this.guiView.setAttackGui();
+        this.changePlayer();
     }
 
     public void addLog(String log) {
         this.guiView.addLog(log);
     }
 
-    public void newTurn() {
-        this.guiView.unHighlightCard(this.focusedCard);
-        this.focusedCard = null;
+    public void changePlayer() {
+        this.setCardsGUI();
+        if (this.focusedCard != null) {
+            this.guiView.unHighlightCard(this.focusedCard);
+            this.focusedCard = null;
+        }
+        if (this.focusedPlayer != -1) {
+            this.guiView.unHighlightPlayer(this.focusedPlayer);
+            this.focusedPlayer = -1;
+        }
     }
+
+    public void checkWitchValidity() {
+        if (this.usingWitch instanceof TheInquisition) {
+            if (this.focusedCard == null) {
+                this.guiView.setWitchValidation(false);
+            } else {
+                this.guiView.setWitchValidation(
+                        this.focusedCard.type == MainController.RUMOUR_CARD
+                                && this.focusedCard.player == this.game.getCurrentPlayerIndex()
+                );
+            }
+        } else if (this.usingWitch instanceof PointedHat) {
+            if (this.focusedCard == null) {
+                this.guiView.setWitchValidation(false);
+            } else {
+                this.guiView.setWitchValidation(
+                        this.focusedCard.type == MainController.REVEALED_CARD
+                                && this.focusedCard.player == this.game.getCurrentPlayerIndex()
+                );
+            }
+        } else {
+            this.guiView.setWitchValidation(true);
+        }
+    }
+
+    public void checkHuntValidity() {
+        if (this.usingHunt instanceof Toad || this.usingHunt instanceof Cauldron) {
+            this.guiView.setWitchValidation(true);
+            return;
+        }
+        int currentPlayerIndex = this.game.getCurrentPlayerIndex();
+        if (this.usingHunt instanceof BlackCat) {
+//            this.guiView.setWitchValidation();
+            this.guiView.setWitchValidation(
+                    this.focusedPlayer != -1
+                            && currentPlayerIndex != this.focusedPlayer
+                            && !this.game.getPlayers().get(this.focusedPlayer).isRevealed()
+            );
+        }
+    }
+
 }

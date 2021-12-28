@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @author thgir
  */
-public class ComputerPlayer extends Player {
+public final class ComputerPlayer extends Player {
     private final Map<Player, Integer> nbrOfAccusers;
     private final ArrayList<Player> secretlyKnownPlayer;
     AIStrategy strategy;

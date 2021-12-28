@@ -17,6 +17,16 @@ public final class Broomstick extends AbstractRumourCard implements RumourCard{
     }
 
     @Override
+    public boolean witchUserTakesTurn() {
+        return true;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "Broomstick";
     }

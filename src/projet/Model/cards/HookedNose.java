@@ -2,7 +2,6 @@ package projet.Model.cards;
 
 import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
-import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -37,6 +36,15 @@ public final class HookedNose extends AbstractRumourCard implements RumourCard{
         } else {
             System.out.println(cardOwner.printIdentity() + " n'a pas de carte, vous ne récupérez rien.");
         }
+    }
+
+    public boolean witchUserTakesTurn() {
+        return true;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return true;
     }
 
     @Override

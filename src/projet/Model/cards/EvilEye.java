@@ -6,7 +6,6 @@ import projet.Model.player.Player;
 import java.util.ArrayList;
 
 public final class EvilEye extends AbstractRumourCard implements RumourCard {
-    // TODO : implémenter l'obligation de dénoncer un autre joueur que le possesseur de la carte en mettant des restrictions directement dans la classe Game
 
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
@@ -16,6 +15,16 @@ public final class EvilEye extends AbstractRumourCard implements RumourCard {
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         return this.chooseNextPlayer(cardOwner, allPlayers);
+    }
+
+    @Override
+    public boolean witchUserTakesTurn() {
+        return false;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return false;
     }
 
     @Override

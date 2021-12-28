@@ -10,11 +10,15 @@ import java.util.ArrayList;
 public abstract class Player {
     protected final ArrayList<RumourCard> rumourCards;
     protected final ArrayList<RumourCard> revealedCards;
+    protected AttackAction attackAction;
+    protected DefenseAction defenseAction;
+    protected Thread wait;
     private final IdentityCard identity;
     private final String name;
     private boolean isRevealed;
     private int points;
     Game game; // game is not private cause HumanPlayer and ComputerPlayer must access it
+    private Player accuser = null;
 
     public Player(int nbr_of_cards, String name, Game game) {
         this.revealedCards = new ArrayList<>();
@@ -63,6 +67,7 @@ public abstract class Player {
 
     public void revealIdentity() {
         this.isRevealed = true;
+        this.game.getController().addLog(this + " révèle son identité : " + this.printIdentity());
     }
 
     public void hideIdentity() {
@@ -75,6 +80,7 @@ public abstract class Player {
 
     public Player accuse(Player accusedPlayer) {
         this.game.getController().addLog(this + " accuse " + accusedPlayer);
+        accusedPlayer.setAccuser(this);
         return accusedPlayer.defendAgainstAccusation(this);
     }
 
@@ -178,7 +184,31 @@ public abstract class Player {
         }
     }
 
+    public boolean isCurrentPlayer() {
+        return this == this.game.getCurrentPlayer();
+    }
+
     public abstract Player selectNextPlayer(ArrayList<Player> selectablePlayers);
+
+    public void setAttackAction(AttackAction attackAction) {
+        this.attackAction = attackAction;
+    }
+
+    public void setDefenseAction(DefenseAction defenseAction) {
+        this.defenseAction = defenseAction;
+    }
+
+    public void resumeExecution() {
+        this.wait.interrupt();
+    }
+
+    public Player getAccuser() {
+        return accuser;
+    }
+
+    public void setAccuser(Player accuser) {
+        this.accuser = accuser;
+    }
 
     @Override
     public String toString() {

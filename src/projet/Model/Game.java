@@ -20,6 +20,8 @@ public class Game {
     private Player currentPlayer;
     private final int cardPerPlayer;
     private MainController controller = null;
+    private Round currentRound;
+    private int nbrRounds = 0;
 
     public Game(int nbr_humans, int nbr_ia) {
         this.cardPerPlayer = getCardPerPlayer(nbr_humans + nbr_ia);
@@ -28,7 +30,6 @@ public class Game {
         Random random = new Random();
         this.nextPlayer = this.players.get(random.nextInt(this.players.size()));
         this.currentPlayer = nextPlayer;
-        this.distributeRumourCards();
     }
 
     public void setController(MainController controller) {
@@ -49,6 +50,14 @@ public class Game {
         return currentPlayer;
     }
 
+    public int getCurrentPlayerIndex() {
+        return this.players.indexOf(currentPlayer);
+    }
+
+    public void setNextPlayer(Player nextPlayer) {
+        this.nextPlayer = nextPlayer;
+    }
+
     public void setCurrentPlayer(Player player) {
         this.currentPlayer = player;
     }
@@ -56,10 +65,10 @@ public class Game {
     private @NotNull ArrayList<Player> createPlayers(int nbr_humans, int nbr_ia, int card_per_player) {
         final ArrayList<Player> newPlayers = new ArrayList<>(nbr_humans + nbr_ia);
         for (int i = 0; i < nbr_humans; i++) {
-            newPlayers.add(new HumanPlayer(card_per_player, "Joueur " + i + " (humain)", this));
+            newPlayers.add(new HumanPlayer(card_per_player, "Joueur " + (i + 1) + " (humain)", this));
         }
         for (int i = 0; i < nbr_ia; i++) {
-            newPlayers.add(new ComputerPlayer(card_per_player, "Joueur " + i + " (IA)", this));
+            newPlayers.add(new ComputerPlayer(card_per_player, "Joueur " + (i + nbr_humans + 1) + " (IA)", this));
         }
         return newPlayers;
     }
@@ -106,13 +115,18 @@ public class Game {
                     System.out.println(p.getGame() + " : stratégie " + p.strategyString());
                 }
             }
-            this.distributeRumourCards();
-            this.assignRoles();
-            Round currentRound = new Round();
+            this.newRound();
             currentRound.makeRound();
         }
         WitchHuntUtils.displayNotlikethis();
         System.out.println("Le vainqueur est : " + this.getPlayerWithMaxPoints());
+    }
+
+    public void newRound() {
+        this.currentRound = new Round();
+        nbrRounds++;
+        this.assignRoles();
+        this.distributeRumourCards();
     }
 
     public ArrayList<RumourCard> getDiscardedCards() {
@@ -136,6 +150,10 @@ public class Game {
             }
         }
         return false;
+    }
+
+    public int getPlayerIndex(Player player) {
+        return this.players.indexOf(player);
     }
 
     public MainController getController() {
@@ -168,6 +186,8 @@ public class Game {
 
         public void makeTurn() {
             System.out.println("C'est au tour de " + nextPlayer.getName());
+            controller.addLog("C'est au tour de " + nextPlayer.getName());
+            controller.setCardsGUI();
 //            currentPlayer = nextPlayer;
             nextPlayer = nextPlayer.playerTurn();
         }

@@ -2,7 +2,6 @@ package projet.Model.cards;
 
 import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
-import projet.Model.utils.WitchHuntUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -34,6 +33,16 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
         } else {
             return this.chooseNextPlayer(cardOwner, allPlayers);
         }
+    }
+
+    @Override
+    public boolean witchUserTakesTurn() {
+        return true;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return false;
     }
 
     @Override

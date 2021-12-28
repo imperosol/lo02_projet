@@ -37,6 +37,15 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
         return (cardOwner.isRevealed() && !cardOwner.isWitch());
     }
 
+    public boolean witchUserTakesTurn() {
+        return true;
+    }
+
+    @Override
+    public boolean witchNeedsInteraction() {
+        return true;
+    }
+
     @Override
     public String toString() {
         return "TheInquisition";
