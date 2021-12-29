@@ -27,8 +27,7 @@ public final class HookedNose extends AbstractRumourCard implements RumourCard{
         ArrayList<RumourCard> nextPlayerCards = nextPlayer.getCards();
         final int handSize = nextPlayerCards.size();
         if (handSize > 0) {
-            int cardIndex = new Random().nextInt(handSize);
-            RumourCard card = nextPlayerCards.remove(cardIndex);
+            RumourCard card = nextPlayerCards.remove(new Random().nextInt(handSize));
             cardOwner.giveCard(card);
             if (cardOwner.isHuman()) {
                 System.out.println(cardOwner.printIdentity() + ", vous avez récupéré la carte : " + card);
