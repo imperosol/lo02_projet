@@ -10,8 +10,6 @@ import java.util.ArrayList;
 public abstract class Player {
     protected final ArrayList<RumourCard> rumourCards;
     protected final ArrayList<RumourCard> revealedCards;
-    protected AttackAction attackAction;
-    protected DefenseAction defenseAction;
     protected Thread wait;
     private final IdentityCard identity;
     private final String name;
@@ -190,14 +188,6 @@ public abstract class Player {
 
     public abstract Player selectNextPlayer(ArrayList<Player> selectablePlayers);
 
-    public void setAttackAction(AttackAction attackAction) {
-        this.attackAction = attackAction;
-    }
-
-    public void setDefenseAction(DefenseAction defenseAction) {
-        this.defenseAction = defenseAction;
-    }
-
     public void resumeExecution() {
         this.wait.interrupt();
     }
@@ -208,6 +198,10 @@ public abstract class Player {
 
     public void setAccuser(Player accuser) {
         this.accuser = accuser;
+    }
+
+    public boolean canBeNextPlayer() {
+        return !this.isWitch() || !this.isRevealed;
     }
 
     @Override

@@ -29,6 +29,14 @@ public final class BlackCat extends AbstractRumourCard implements RumourCard {
         return cardOwner;
     }
 
+    public Player huntEffect(Player cardOwner, RumourCard toTake) {
+        cardOwner.discardCard(this);
+        ArrayList<RumourCard> discard = cardOwner.getDiscardedCards();
+        RumourCard takenCard = discard.remove(discard.indexOf(toTake));
+        cardOwner.giveCard(takenCard);
+        return cardOwner;
+    }
+
     @Override
     public boolean isHuntEffectUsable(Player cardOwner) {
         return cardOwner.getGame().getDiscardedCards().size() > 0;

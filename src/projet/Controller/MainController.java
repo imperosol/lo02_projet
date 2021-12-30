@@ -170,7 +170,11 @@ public final class MainController {
 
     public void validateHunt() {
         Player current = this.game.getCurrentPlayer();
+        if (this.usingHunt instanceof BlackCat) {
+            ((BlackCat) this.usingHunt).huntEffect(current, this.game.getDiscardedCards().get(this.focusedCard.index));
+        } else if (this.usingHunt instanceof Toad){
 
+        }
     }
 
     public void newTurn() {
@@ -230,11 +234,14 @@ public final class MainController {
             return;
         }
         if (this.usingHunt instanceof Toad || this.usingHunt instanceof Cauldron) {
+            if (!this.game.getCurrentPlayer().isWitch()) {
+                this.guiView.setHuntValidation(this.focusedPlayer == current || this.focusedPlayer == -1);
+            }
             this.guiView.setHuntValidation(true);
         } else if (this.usingHunt instanceof BlackCat) {
             if (this.focusedCard == null) {
                 this.guiView.setHuntValidation(false);
-            } else if (this.game.getDiscardedCards().size() == 0) {
+            } else if (this.game.getDiscardedCards().isEmpty()) {
                 this.guiView.setHuntValidation(true);
             } else {
                 this.guiView.setHuntValidation(this.focusedCard.type == DISCARD);
@@ -249,13 +256,15 @@ public final class MainController {
                 );
             }
         } else if (this.usingHunt instanceof PointedHat) {
-            if (this.game.getCurrentPlayer().getRevealedCards().size() == 0) {
+            if (this.game.getCurrentPlayer().getRevealedCards().isEmpty()) {
                 this.guiView.setHuntValidation(true);
             } else if (this.focusedCard == null || this.focusedPlayer == current || this.focusedPlayer == -1) {
                 this.guiView.setHuntValidation(false);
             } else {
                 this.guiView.setHuntValidation(this.focusedCard.type == REVEALED_CARD && this.focusedCard.player == current);
             }
+        } else {
+            this.guiView.setHuntValidation(this.focusedPlayer != current && this.focusedPlayer != -1);
         }
     }
 

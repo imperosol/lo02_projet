@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public final class Toad extends AbstractRumourCard implements RumourCard{
     @Override
@@ -20,6 +21,17 @@ public final class Toad extends AbstractRumourCard implements RumourCard{
             return allPlayers.get((playerIndex + 1) % allPlayers.size());
         } else {
             return this.chooseNextPlayer(cardOwner, allPlayers);
+        }
+    }
+
+    public Player huntEffect(Player cardOwner, Player nextPlayer) {
+        cardOwner.revealIdentity();
+        List<Player> allPlayers = cardOwner.getGame().getPlayers();
+        if (cardOwner.isWitch()) {
+            int playerIndex = allPlayers.indexOf(cardOwner);
+            return allPlayers.get((playerIndex + 1) % allPlayers.size());
+        } else {
+            return nextPlayer;
         }
     }
 
