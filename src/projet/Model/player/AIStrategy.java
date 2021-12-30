@@ -4,6 +4,9 @@ import projet.Model.cards.RumourCard;
 
 import java.util.List;
 
+/**
+ * The interface for the strategies of the AI
+ */
 public interface AIStrategy {
     Player getPlayerToAccuse(ComputerPlayer strategyUser, Player toExclude);
 
@@ -15,10 +18,10 @@ public interface AIStrategy {
     int getAttackAction(ComputerPlayer strategyOwner);
 
     /**
-     *
+     * Select the next player. Function to use when a rumour card asks to select the next player
      * @param strategyOwner the player who uses this strategy
-     * @param selectablePlayers
-     * @return
+     * @param selectablePlayers a list of player who can be selected
+     * @return the selected player
      */
     Player selectNextPlayer(ComputerPlayer strategyOwner, List<Player> selectablePlayers);
 }
