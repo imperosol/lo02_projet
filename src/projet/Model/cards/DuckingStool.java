@@ -7,12 +7,22 @@ import projet.View.CLIView;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * The class representing the Ducking Stool rumour card
+ * @author Thomas Girod
+ */
 public final class DuckingStool extends AbstractRumourCard implements RumourCard {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         return this.chooseNextPlayer(cardOwner, allPlayers);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     private Player getWartOwner(Player cardOwner, ArrayList<Player> allPlayers) {
         for (Player p : allPlayers) {
             if (p != cardOwner && !p.isRevealed()) {
@@ -26,6 +36,9 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         // if the Wart card has been revealed, remove its owner from the list of revealable players
@@ -43,10 +56,10 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
                         2 : Révéler votre identité (+1 point à l'accusateur si vous êtes sorcière, -1 sinon)
                         \t->\s""");
                 choice = CLIView.consoleIntegerChoice(1, 2);
-            } else if (selectedPlayer.getCards().size() == 0 && !selectedPlayer.isRevealed()) {
+            } else if (selectedPlayer.getCards().isEmpty() && !selectedPlayer.isRevealed()) {
                 System.out.println("Vous devez révéler votre identité");
                 choice = 2;
-            } else if (selectedPlayer.getCards().size() > 0 && selectedPlayer.isRevealed()) {
+            } else if (!selectedPlayer.getCards().isEmpty() && selectedPlayer.isRevealed()) {
                 System.out.println("Vous devez défausser une carte");
                 choice = 1;
             } else {
@@ -54,12 +67,11 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
                 return selectedPlayer;
             }
         } else {
-            // TODO : comportement purement aléatoire. Améliorer ça
-            if (selectedPlayer.getCards().size() > 0 && !selectedPlayer.isRevealed()) {
+            if (!selectedPlayer.getCards().isEmpty() && !selectedPlayer.isRevealed()) {
                 choice = random.nextInt(2) + 1;
-            } else if (selectedPlayer.getCards().size() == 0 && !selectedPlayer.isRevealed()) {
+            } else if (selectedPlayer.getCards().isEmpty() && !selectedPlayer.isRevealed()) {
                 choice = 2;
-            } else if (selectedPlayer.getCards().size() > 0 && selectedPlayer.isRevealed()) {
+            } else if (!selectedPlayer.getCards().isEmpty() && selectedPlayer.isRevealed()) {
                 choice = 1;
             } else {
                 return selectedPlayer;
@@ -88,16 +100,10 @@ public final class DuckingStool extends AbstractRumourCard implements RumourCard
         }
     }
 
-    @Override
-    public boolean witchUserTakesTurn() {
-        return false;
-    }
-
-    @Override
-    public boolean witchNeedsInteraction() {
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     * @return "Ducking Stool"
+     */
     @Override
     public String toString() {
         return "DuckingStool";

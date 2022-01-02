@@ -1,7 +1,5 @@
 package projet.Model.player;
 
-import projet.Model.cards.RumourCard;
-
 import java.util.List;
 
 /**

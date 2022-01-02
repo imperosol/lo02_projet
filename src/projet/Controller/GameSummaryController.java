@@ -29,4 +29,5 @@ public final class GameSummaryController {
     public int getLines() {
         return this.gameSummary.size() + 1;
     }
+
 }

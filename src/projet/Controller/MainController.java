@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public final class MainController {
     public static final int RUMOUR_CARD = 1;
@@ -82,21 +83,47 @@ public final class MainController {
             this.guiView.setRevealedCards(index, revealedCardsImages);
             index++;
         }
+        ArrayList<RumourCard> discard = this.game.getDiscardedCards();
+        ArrayList<ImageIcon> discardImages = new ArrayList<>(discard.size());
+        for (RumourCard card : discard) {
+            discardImages.add(this.cardImages.get(card.toString()));
+        }
+        this.guiView.setDiscardededCards(discardImages);
     }
 
     public void focusCard(int player, int index, int type) {
-        int currentPlayerIndex = this.game.getPlayers().indexOf(this.game.getCurrentPlayer());
         if (this.focusedCard != null) {
             this.guiView.unHighlightCard(this.focusedCard);
         }
         this.focusedCard = new GUICard(player, index, type);
         this.guiView.highlightCard(this.focusedCard);
-        this.guiView.setUseHuntButton(
-                this.focusedCard != null
-                        && this.focusedCard.player == currentPlayerIndex
-        );
-        this.guiView.setUseWitchButton(this.focusedCard != null && this.focusedCard.player == this.game.getCurrentPlayerIndex());
-        this.guiView.setUseHuntButton(this.focusedCard != null && this.focusedCard.player == this.game.getCurrentPlayerIndex());
+        boolean isCardOfCurrent = this.focusedCard != null && this.focusedCard.player == this.game.getCurrentPlayerIndex();
+        if (this.currentPhase == GamePhase.ATTACK_COMPLEMENTARY) {
+            this.checkHuntValidity();
+        } else if (this.currentPhase == GamePhase.DEFENSE_COMPLEMENTARY) {
+            this.checkWitchValidity();
+        } else if (this.currentPhase == GamePhase.DUCKING_STOOL) {
+            if (this.focusedCard != null) {
+                this.guiView.setDuckingStoolDiscardValidation(this.focusedCard.type == RUMOUR_CARD && this.focusedCard.player == this.game.getCurrentPlayerIndex());
+            } else {
+                this.guiView.setDuckingStoolDiscardValidation(false);
+            }
+        } else {
+            if (isCardOfCurrent && this.focusedCard.type == RUMOUR_CARD) {
+                RumourCard card = this.game.getCurrentPlayer().getCards().get(this.focusedCard.index);
+                if (this.currentPhase == GamePhase.ATTACK) {
+                    this.guiView.setUseHuntButton(card.isHuntEffectUsable(this.game.getCurrentPlayer()));
+                } else if (this.currentPhase == GamePhase.DEFENSE) {
+                    this.guiView.setUseWitchButton(card.isWitchEffectUsable(this.game.getCurrentPlayer()));
+                }
+            } else {
+                if (this.currentPhase == GamePhase.ATTACK) {
+                    this.guiView.setUseHuntButton(false);
+                } else if (this.currentPhase == GamePhase.DEFENSE) {
+                    this.guiView.setUseWitchButton(false);
+                }
+            }
+        }
     }
 
     public void focusPlayer(int player) {
@@ -115,6 +142,7 @@ public final class MainController {
     }
 
     public void useHunt() {
+        this.currentPhase = GamePhase.ATTACK_COMPLEMENTARY;
         this.guiView.setHuntValidationGUI();
         Player current = this.game.getCurrentPlayer();
         this.usingHunt = current.getCards().get(this.focusedCard.index);
@@ -135,11 +163,13 @@ public final class MainController {
     }
 
     public void useWitch() {
+        this.currentPhase = GamePhase.DEFENSE_COMPLEMENTARY;
         this.guiView.setWitchValidationGUI();
         Player current = this.game.getCurrentPlayer();
         this.usingWitch = current.getCards().get(this.focusedCard.index);
         this.addLog(current + " utilise le Witch de la carte " + this.usingWitch);
         current.revealCard(this.usingWitch);
+        this.guiView.unHighlightCard(this.focusedCard);
         this.focusedCard = null;
         this.validateWitch();
         this.setCardsGUI();
@@ -170,17 +200,57 @@ public final class MainController {
 
     public void validateHunt() {
         Player current = this.game.getCurrentPlayer();
-        if (this.usingHunt instanceof BlackCat) {
-            ((BlackCat) this.usingHunt).huntEffect(current, this.game.getDiscardedCards().get(this.focusedCard.index));
-        } else if (this.usingHunt instanceof Toad){
-
+        Player selected;
+        Player nextPlayer;
+        if (this.focusedPlayer != -1) {
+            selected = this.game.getPlayers().get(this.focusedPlayer);
+        } else {
+            selected = null;
         }
+        if (this.usingHunt instanceof BlackCat) {
+            RumourCard toDiscard = this.game.getDiscardedCards().get(this.focusedCard.index);
+            nextPlayer = ((BlackCat) this.usingHunt).huntEffect(current, toDiscard);
+        } else if (this.usingHunt instanceof Toad || this.usingHunt instanceof Cauldron) {
+            nextPlayer = ((AbstractRumourCard) this.usingHunt).huntRevealOwnIdentity(current, selected);
+        } else if (this.usingHunt instanceof AngryMob) {
+            nextPlayer = ((AngryMob) this.usingHunt).huntEffect(current, Objects.requireNonNull(selected));
+        } else if (this.usingHunt instanceof PointedHat) {
+            current.hideCard(this.focusedCard.index);
+            nextPlayer = this.game.getPlayers().get(this.focusedPlayer);
+        } else if (this.usingHunt instanceof TheInquisition) {
+            nextPlayer = current;
+        } else if (this.usingHunt instanceof HookedNose) {
+            nextPlayer = ((HookedNose) this.usingHunt).huntEffect(current, selected);
+        } else if (this.usingHunt instanceof PetNewt) {
+            RumourCard toTake;
+            if (this.focusedCard != null) {
+                toTake = this.game.getPlayers().get(this.focusedCard.player).getRevealedCards().get(this.focusedCard.index);
+            } else {
+                toTake = null;
+            }
+            nextPlayer = ((PetNewt) this.usingHunt).huntEffect(current, toTake, Objects.requireNonNull(selected));
+        } else if (this.usingHunt instanceof DuckingStool) {
+            this.currentPhase = GamePhase.DUCKING_STOOL;
+            this.DuckingStoolHuntFinish();
+            return;
+        } else {
+            nextPlayer = this.game.getPlayers().get(this.focusedPlayer);
+        }
+        this.game.setCurrentPlayer(nextPlayer);
+        this.newTurn();
     }
 
     public void newTurn() {
+        if (this.game.isCurrentRoundEnded()) {
+            this.game.newRound();
+        }
+        this.guiView.setAttackGui();
+        while (!this.game.getCurrentPlayer().isHuman()) {
+            this.addLog("C'est au tour de " + this.game.getCurrentPlayer() + "\n");
+            this.game.setCurrentPlayer(this.game.getCurrentPlayer().playerTurn());
+        }
         this.addLog("C'est au tour de " + this.game.getCurrentPlayer() + "\n");
         this.currentPhase = GamePhase.ATTACK;
-        this.guiView.setAttackGui();
         this.changePlayer();
     }
 
@@ -228,17 +298,23 @@ public final class MainController {
     }
 
     public void checkHuntValidity() {
-        int current = this.game.getCurrentPlayerIndex();
-        if (!this.usingHunt.isHuntEffectUsable(this.game.getCurrentPlayer())) {
+        final int current = this.game.getCurrentPlayerIndex();
+        final RumourCard wantedCard = switch (this.focusedCard.type) {
+            case DISCARD -> this.game.getDiscardedCards().get(this.focusedCard.index);
+            case REVEALED_CARD -> this.game.getPlayers().get(this.focusedCard.player).getRevealedCards().get(this.focusedCard.index);
+            case RUMOUR_CARD -> this.game.getPlayers().get(this.focusedCard.player).getCards().get(this.focusedCard.index);
+            default -> throw new IllegalStateException("Unexpected value: " + this.focusedCard.type);
+        };
+        if (!wantedCard.isHuntEffectUsable(this.game.getCurrentPlayer())) {
             this.guiView.setHuntValidation(false);
             return;
         }
-        if (this.usingHunt instanceof Toad || this.usingHunt instanceof Cauldron) {
+        if (wantedCard instanceof Toad || wantedCard instanceof Cauldron) {
             if (!this.game.getCurrentPlayer().isWitch()) {
                 this.guiView.setHuntValidation(this.focusedPlayer == current || this.focusedPlayer == -1);
             }
             this.guiView.setHuntValidation(true);
-        } else if (this.usingHunt instanceof BlackCat) {
+        } else if (wantedCard instanceof BlackCat) {
             if (this.focusedCard == null) {
                 this.guiView.setHuntValidation(false);
             } else if (this.game.getDiscardedCards().isEmpty()) {
@@ -246,7 +322,7 @@ public final class MainController {
             } else {
                 this.guiView.setHuntValidation(this.focusedCard.type == DISCARD);
             }
-        } else if (this.usingHunt instanceof PetNewt) {
+        } else if (wantedCard instanceof PetNewt) {
             if (this.focusedCard == null || this.focusedPlayer == current || this.focusedPlayer == -1) {
                 this.guiView.setHuntValidation(false);
             } else {
@@ -255,7 +331,7 @@ public final class MainController {
                                 && this.focusedCard.player != current
                 );
             }
-        } else if (this.usingHunt instanceof PointedHat) {
+        } else if (wantedCard instanceof PointedHat) {
             if (this.game.getCurrentPlayer().getRevealedCards().isEmpty()) {
                 this.guiView.setHuntValidation(true);
             } else if (this.focusedCard == null || this.focusedPlayer == current || this.focusedPlayer == -1) {
@@ -268,4 +344,32 @@ public final class MainController {
         }
     }
 
+    public void DuckingStoolHuntFinish() {
+        Player attackedPlayer = this.game.getPlayers().get(this.focusedPlayer);
+        this.addLog(attackedPlayer + ", vous devez révéler votre identité ou défausser une carte");
+        attackedPlayer.setAccuser(this.game.getCurrentPlayer());
+        this.game.setCurrentPlayer(attackedPlayer);
+        setCardsGUI();
+        this.guiView.setDuckingStoolGui();
+    }
+
+    public void duckingStoolDiscardCard() {
+        RumourCard toDiscard = this.game.getCurrentPlayer().getCards().get(this.focusedCard.index);
+        Player current = this.game.getCurrentPlayer();
+        current.discardCard(toDiscard);
+        this.newTurn();
+    }
+
+    public void DuckingStoolRevealIdentity() {
+        Player current = this.game.getCurrentPlayer();
+        Player accuser = current.getAccuser();
+        current.revealIdentity();
+        if (current.isWitch()) {
+            accuser.addPoints(1);
+            this.game.setCurrentPlayer(accuser);
+        } else {
+            accuser.addPoints(-1);
+        }
+        this.newTurn();
+    }
 }

@@ -6,6 +6,10 @@ import projet.Model.player.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class containing all the useful function used several times in the code
+ * @author Pierrick Dheilly
+ */
 public class WitchHuntUtils {
 
     /**

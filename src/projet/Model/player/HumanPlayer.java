@@ -7,20 +7,33 @@ import projet.Model.utils.WitchHuntUtils;
 import projet.View.CLIView;
 
 import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * a class representing a human player.
+ * Inherits from {@link Player}
+ * @see Player
+ * @author Thomas Girod
+ */
 public final class HumanPlayer extends Player {
-    private List<Player> accusablePlayers;
-
-    public HumanPlayer(int nbr_of_cards, String name, Game game) {
-        super(nbr_of_cards, name, game);
+    /**
+     * {@inheritDoc}
+     */
+    public HumanPlayer(String name, Game game) {
+        super(name, game);
     }
 
+    /**
+     * {@inheritDoc}
+     * @return true
+     */
     @Override
     public boolean isHuman() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void chooseIdentity() {
         System.out.println(this.getName() + ", voulez-vous être :\n" +
@@ -34,11 +47,17 @@ public final class HumanPlayer extends Player {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player selectNextPlayer(ArrayList<Player> selectablePlayers) {
         return CLIView.consoleSelectPlayer(selectablePlayers);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player defendAgainstAccusation(Player accuser) {
         this.game.setCurrentPlayer(this);
@@ -69,26 +88,29 @@ public final class HumanPlayer extends Player {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Player getPlayerToAccuse(Player toExclude) {
-        this.accusablePlayers = WitchHuntUtils.getRevealablePlayers(
+        ArrayList<Player> revealable = WitchHuntUtils.getRevealablePlayers(
                 this,
                 this.game.getPlayers()
         );
-        this.accusablePlayers.remove(toExclude);
-        return null;
-//        return CLIView.consoleSelectPlayer(revealable);
+        revealable.remove(toExclude);
+        return CLIView.consoleSelectPlayer(revealable);
     }
 
-    public boolean canAccuse(Player toAccuse) {
-        return this.accusablePlayers.contains(toAccuse);
-    }
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void lookAtIdentity(Player lookedPlayer) {
         System.out.println("Identité de " + lookedPlayer + " : " + lookedPlayer.printIdentity());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player playerTurn() {
         System.out.println("Les cartes de votre main sont : ");
@@ -101,7 +123,6 @@ public final class HumanPlayer extends Player {
                 1 : dénoncer un joueur
                 2 : révéler une carte et appliquer son effet Hunt
                 \t->\040""");
-//        this.attackAction = AttackAction.UNDEFINED;
         // TODO reintegrate this part when gui is finished
 //        int choice = CLIView.consoleIntegerChoice(1, 2);
 //        Player nextPlayer;

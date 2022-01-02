@@ -4,9 +4,17 @@ import org.jetbrains.annotations.NotNull;
 import projet.Model.player.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
+/**
+ * The class representing the Cauldron rumour card
+ * @author Pierrick Dheilly
+ */
 public final class Cauldron extends AbstractRumourCard implements RumourCard {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         // the accuser discards a random card
@@ -23,6 +31,9 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
         return cardOwner;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         cardOwner.revealIdentity();
@@ -35,16 +46,10 @@ public final class Cauldron extends AbstractRumourCard implements RumourCard {
         }
     }
 
-    @Override
-    public boolean witchUserTakesTurn() {
-        return true;
-    }
-
-    @Override
-    public boolean witchNeedsInteraction() {
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     * @return "Cauldron"
+     */
     @Override
     public String toString() {
         return "Cauldron";

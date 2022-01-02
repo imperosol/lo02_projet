@@ -5,28 +5,32 @@ import projet.Model.player.Player;
 
 import java.util.ArrayList;
 
+/**
+ * The class representing the EvilEye rumour card
+ * @author Pierrick Dheilly
+ */
 public final class EvilEye extends AbstractRumourCard implements RumourCard {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         return this.chooseNextPlayer(cardOwner, allPlayers);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         return this.chooseNextPlayer(cardOwner, allPlayers);
     }
 
-    @Override
-    public boolean witchUserTakesTurn() {
-        return false;
-    }
-
-    @Override
-    public boolean witchNeedsInteraction() {
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     * @return "EvilEye
+     */
     @Override
     public String toString() {
         return "EvilEye";

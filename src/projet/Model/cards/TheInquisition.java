@@ -7,8 +7,15 @@ import projet.View.CLIView;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * The class representing the Inquisition rumour card
+ * @author Thomas Girod
+ */
 public final class TheInquisition extends AbstractRumourCard implements RumourCard {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player witchEffect(Player cardOwner, @NotNull ArrayList<Player> allPlayers, Player accuser) {
         ArrayList<RumourCard> cards = cardOwner.getCards();
@@ -24,6 +31,9 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
         return cardOwner;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Player huntEffect(Player cardOwner, ArrayList<Player> allPlayers) {
         Player nextPlayer = this.chooseNextPlayer(cardOwner, allPlayers);
@@ -31,21 +41,19 @@ public final class TheInquisition extends AbstractRumourCard implements RumourCa
         return nextPlayer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isWitchEffectUsable(Player cardOwner) {
         // effect usable if the card has already revealed a rumour card
         return (cardOwner.isRevealed() && !cardOwner.isWitch());
     }
 
-    public boolean witchUserTakesTurn() {
-        return true;
-    }
-
-    @Override
-    public boolean witchNeedsInteraction() {
-        return true;
-    }
-
+    /**
+     * {@inheritDoc}
+     * @return "TheInquisition"
+     */
     @Override
     public String toString() {
         return "TheInquisition";

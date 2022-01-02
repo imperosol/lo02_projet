@@ -9,7 +9,6 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +50,8 @@ public class GUIView extends JFrame {
     private JButton validateHuntButton;
     private JButton validateWitchButton;
     private JPanel discardPanel;
+    private JButton duckingStoolRevealIdentity;
+    private JButton duckingStoolDiscardCard;
     private ArrayList<ArrayList<JLabel>> rumourCards;
     private ArrayList<ArrayList<JLabel>> revealedCards;
     private ArrayList<JLabel> discardLabels;
@@ -82,18 +83,17 @@ public class GUIView extends JFrame {
         this.revealIdentityButton = new JButton();
         this.validateHuntButton = new JButton();
         this.validateWitchButton = new JButton();
-        this.useWitchButton.setVisible(false);
-        this.revealIdentityButton.setVisible(false);
-        this.useHuntButton.setEnabled(false);
-        this.accusePlayerButton.setEnabled(false);
-        this.validateWitchButton.setVisible(false);
-        this.validateHuntButton.setVisible(false);
+        this.duckingStoolDiscardCard = new JButton();
+        this.duckingStoolRevealIdentity = new JButton();
+        this.hideAllButtons();
         this.useHuntButton.addActionListener(e -> mainController.useHunt());
         this.accusePlayerButton.addActionListener(e -> mainController.accusePlayer());
         this.useWitchButton.addActionListener(e -> mainController.useWitch());
         this.revealIdentityButton.addActionListener(e -> mainController.revealIdentity());
         this.validateWitchButton.addActionListener(e -> mainController.validateWitch());
         this.validateHuntButton.addActionListener(e -> mainController.validateHunt());
+        this.duckingStoolDiscardCard.addActionListener(e -> mainController.duckingStoolDiscardCard());
+        this.duckingStoolRevealIdentity.addActionListener(e -> mainController.DuckingStoolRevealIdentity());
     }
 
     private void initPlayerLabels() {
@@ -183,8 +183,8 @@ public class GUIView extends JFrame {
             for (int label = 0; label < 5; label++) {
                 JLabel tmpLabel1 = new JLabel();
                 JLabel tmpLabel2 = new JLabel();
-                gerCardListener(tmpLabel1, label, panel, MainController.RUMOUR_CARD);
-                gerCardListener(tmpLabel2, label, panel, MainController.REVEALED_CARD);
+                setCardListener(tmpLabel1, label, panel, MainController.RUMOUR_CARD);
+                setCardListener(tmpLabel2, label, panel, MainController.REVEALED_CARD);
                 tmpCards.add(tmpLabel1);
                 rumourCardsPanel.get(panel).add(tmpLabel1);
                 tmpRevealed.add(tmpLabel2);
@@ -193,7 +193,7 @@ public class GUIView extends JFrame {
             }
             for (int i = 0; i < 2; i++) {
                 JLabel tmpLabel = new JLabel();
-                gerCardListener(tmpLabel, panel * 2 + i, 1, MainController.DISCARD);
+                setCardListener(tmpLabel, panel * 2 + i, 1, MainController.DISCARD);
                 this.discardPanel.add(tmpLabel);
                 this.discardLabels.add(tmpLabel);
             }
@@ -202,13 +202,11 @@ public class GUIView extends JFrame {
         }
     }
 
-    private void gerCardListener(JLabel tmpLabel, int label, int panel, int type) {
+    private void setCardListener(JLabel tmpLabel, int label, int panel, int type) {
         tmpLabel.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 mainController.focusCard(panel, label, type);
-                mainController.checkWitchValidity();
-                mainController.checkHuntValidity();
             }
 
             @Override
@@ -241,6 +239,13 @@ public class GUIView extends JFrame {
             this.revealedCards.get(player).get(i).setIcon(imageIcons.get(i));
         }
         this.revealedCards.get(player).get(imageIcons.size()).setIcon(null);
+    }
+
+    public void setDiscardededCards(List<ImageIcon> imageIcons) {
+        for (int i = 0; i < imageIcons.size(); i++) {
+            this.discardLabels.get(i).setIcon(imageIcons.get(i));
+        }
+        this.discardLabels.get(imageIcons.size()).setIcon(null);
     }
 
     public void highlightCard(int panel, int label, int type) {
@@ -292,44 +297,49 @@ public class GUIView extends JFrame {
     }
 
     public void setDefenseGui() {
-        this.accusePlayerButton.setVisible(false);
-        this.useHuntButton.setVisible(false);
+        this.hideAllButtons();
         this.useWitchButton.setVisible(true);
         this.useWitchButton.setEnabled(false);
         this.revealIdentityButton.setVisible(true);
-        this.validateWitchButton.setVisible(false);
-        this.validateHuntButton.setVisible(false);
     }
 
     public void setAttackGui() {
+        this.hideAllButtons();
         this.accusePlayerButton.setEnabled(false);
         this.accusePlayerButton.setVisible(true);
         this.useHuntButton.setEnabled(false);
         this.useHuntButton.setVisible(true);
-        this.useWitchButton.setVisible(false);
-        this.revealIdentityButton.setVisible(false);
-        this.validateWitchButton.setVisible(false);
-        this.validateHuntButton.setVisible(false);
     }
 
     public void setHuntValidationGUI() {
-        this.accusePlayerButton.setVisible(false);
-        this.useHuntButton.setVisible(false);
-        this.useWitchButton.setVisible(false);
-        this.revealIdentityButton.setVisible(false);
-        this.validateWitchButton.setVisible(false);
+        this.hideAllButtons();
         this.validateHuntButton.setVisible(true);
         this.validateHuntButton.setEnabled(false);
     }
 
     public void setWitchValidationGUI() {
+        this.hideAllButtons();
+        this.validateWitchButton.setVisible(true);
+        this.validateWitchButton.setEnabled(false);
+    }
+
+    public void setDuckingStoolGui() {
+        this.hideAllButtons();
+        this.duckingStoolRevealIdentity.setVisible(true);
+        this.duckingStoolRevealIdentity.setEnabled(true);
+        this.duckingStoolDiscardCard.setVisible(true);
+        this.duckingStoolDiscardCard.setEnabled(false);
+    }
+
+    public void hideAllButtons() {
         this.accusePlayerButton.setVisible(false);
         this.useHuntButton.setVisible(false);
         this.useWitchButton.setVisible(false);
         this.revealIdentityButton.setVisible(false);
-        this.validateWitchButton.setVisible(true);
+        this.validateWitchButton.setVisible(false);
         this.validateHuntButton.setVisible(false);
-        this.validateWitchButton.setEnabled(false);
+        this.duckingStoolRevealIdentity.setVisible(false);
+        this.duckingStoolDiscardCard.setVisible(false);
     }
 
     public void setHuntValidation(boolean active) {
@@ -338,6 +348,10 @@ public class GUIView extends JFrame {
 
     public void setWitchValidation(boolean active) {
         this.validateWitchButton.setEnabled(active);
+    }
+
+    public void setDuckingStoolDiscardValidation(boolean active) {
+        this.duckingStoolDiscardCard.setEnabled(active);
     }
 
     public void addLog(String log) {
