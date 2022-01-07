@@ -7,6 +7,8 @@ import projet.Model.Game;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -60,7 +62,7 @@ public class GUIView extends JFrame {
     private final MainController mainController;
 
     public GUIView(Game game) {
-        super("test");
+        super("Witch Hunt");
         this.gameSummaryController = new GameSummaryController(game);
         this.mainController = new MainController(game, this);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
